@@ -6,7 +6,7 @@ import { signOut as firebaseSignOut } from "firebase/auth";
 
 export default function NavBar({ role, onOpenCreateRequest }) {
     const [userData, setUserData] = useState(null);
-    const [image, setImage] = useState(null);  // Stocăm imaginea încărcată
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,18 +42,6 @@ export default function NavBar({ role, onOpenCreateRequest }) {
         }
     };
 
-    // Funcție pentru a gestiona încărcarea imaginii
-    const handleImageUpload = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result);  // Salvează imaginea încărcată în stat
-            };
-            reader.readAsDataURL(file);  // Citește fișierul ca URL
-        }
-    };
-
     return (
         <header className="w-full fixed top-0 left-0 z-10 bg-white shadow-md">
             <nav className="max-w-screen-xl mx-auto flex items-center justify-between p-4">
@@ -81,62 +69,33 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                 </Link>
                             </li>
                         )}
-                        <li className="relative group flex items-center space-x-2">
+                        <li
+                            className="relative flex items-center space-x-2"
+                            onMouseEnter={() => setIsDropdownVisible(true)}
+                            onMouseLeave={() => setIsDropdownVisible(false)}
+                        >
                             {/* Zona mai largă pentru hover */}
-                            <div className="flex items-center justify-center hover:cursor-pointer p-3 group-hover:block">
+                            <div className="flex items-center justify-center hover:cursor-pointer p-3">
                                 {/* Button pentru Contul Meu */}
                                 <button className="hover:text-green-500">
-                                    {/* Dacă există imaginea încărcată, o afișăm în locul inițialelor */}
-                                    <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
-                                        {image ? (
-                                            <img
-                                                src={image}
-                                                alt="User"
-                                                className="w-full h-full object-cover"  // Asigură-te că imaginea umple cerculețul fără a se deforma
-                                            />
-                                        ) : (
-                                            userData && (
-                                                <div className="w-10 h-10 bg-green-500 text-white flex items-center justify-center text-sm font-semibold transition-colors duration-300">
-                                                    {getInitials(userData.email)}
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
+                                    {/* Cercul cu initialele */}
+                                    {userData && (
+                                        <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold group-hover:bg-green-600 transition-colors duration-300">
+                                            {getInitials(userData.email)}
+                                        </div>
+                                    )}
                                 </button>
                             </div>
 
                             {/* Dropdown-ul */}
-                            {userData && (
-                                <div className="absolute left-1/2 top-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 transform -translate-x-1/2 opacity-0 visibility-hidden group-hover:opacity-100 group-hover:visible transition-all duration-300 delay-200 min-w-[250px] max-w-[300px]">
-                                    <div className="flex flex-col space-y-2">
-                                        <div className="flex justify-between text-sm">
-                                            <span><strong>Nume:</strong></span>
-                                            <span>{userData.nume || "N/A"}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span><strong>Email:</strong></span>
-                                            <span>{userData.email}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span><strong>Rol:</strong></span>
-                                            <span>{userData.role}</span>
-                                        </div>
-                                    </div>
-
-                                    {/* Buton pentru încărcare imagine */}
-                                    <div className="mt-2">
-                                        <p className="text-sm cursor-pointer text-blue-500" onClick={() => document.getElementById('file-upload').click()}>
-                                            Adaugă imagine
-                                        </p>
-                                        <input
-                                            id="file-upload"
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageUpload}
-                                            className="hidden"
-                                        />
-                                    </div>
-
+                            {userData && isDropdownVisible && (
+                                <div className="absolute left-1/2 top-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 transform -translate-x-1/2">
+                                    <p className="text-sm"><strong>Nume:</strong> {userData.name || "N/A"}</p>
+                                    <p className="text-sm"><strong>Email:</strong> {userData.email}</p>
+                                    <p className="text-sm"><strong>Rol:</strong> {userData.role}</p>
+                                    <p className="text-sm"><strong>Telefon:</strong> {userData.phone || "N/A"}</p>
+                                    <p className="text-sm"><strong>Oras:</strong> {userData.city || "N/A"}</p>
+                                    <p className="text-sm"><strong>Adresa:</strong> {userData.street || "N/A"}</p>
                                     {/* P tag pentru deconectare */}
                                     <p
                                         onClick={handleLogout}

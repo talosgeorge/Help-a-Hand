@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
+import { auth, db } from "../firebase";
 import RequestContainer from "./RequestContainer";
 import NavBar from "./NavBar";
 
@@ -14,11 +14,16 @@ export default function OwnRequestView() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
+        const user = auth.currentUser;
+        if (!user) return;
+
         const snapshot = await getDocs(collection(db, "requests"));
-        const data = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        const data = snapshot.docs
+          .map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }))
+          .filter(req => req.uid === user.uid); // 🔐 doar cererile mele
 
         // 🔽 Sortează după pachet (prioritate)
         const priorityMap = {
@@ -40,6 +45,7 @@ export default function OwnRequestView() {
         console.error("Error loading requests:", error);
       }
     };
+
     fetchRequests();
   }, []);
 

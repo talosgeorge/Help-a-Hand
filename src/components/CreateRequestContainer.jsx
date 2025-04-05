@@ -1,9 +1,6 @@
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from 'use-places-autocomplete';
+import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import { useState } from 'react';
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 
 export default function CreateRequestContainer({ onClose }) {
@@ -54,16 +51,32 @@ export default function CreateRequestContainer({ onClose }) {
     }
 
     try {
+      // 🧠 Obține pachetul utilizatorului pentru a determina prioritatea
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.exists() ? userSnap.data() : {};
+
+      const userPackage = userData.package || "None";
+
+      const priorityMap = {
+        Diamond: 1,
+        Gold: 2,
+        Silver: 3
+      };
+      const priority = priorityMap[userPackage] || 4;
+
+      // 📨 Trimite cererea cu toate câmpurile + prioritate
       await addDoc(collection(db, "requests"), {
         ...formData,
         uid: user.uid,
         email: user.email,
         createdAt: new Date(),
+        priority,
+        package: userPackage
       });
 
       setShowSuccess(true);
 
-      // Wait 2 seconds then call onClose
       setTimeout(() => {
         setShowSuccess(false);
         if (onClose) onClose();

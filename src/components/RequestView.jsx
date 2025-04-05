@@ -19,8 +19,22 @@ export default function OwnRequestView() {
           id: doc.id,
           ...doc.data()
         }));
-        setRequests(data);
-        setFilteredRequests(data);
+
+        // 🔽 Sortează după pachet (prioritate)
+        const priorityMap = {
+          Diamond: 1,
+          Gold: 2,
+          Silver: 3,
+        };
+
+        const sorted = data.sort((a, b) => {
+          const pa = priorityMap[a.package] || 999;
+          const pb = priorityMap[b.package] || 999;
+          return pa - pb;
+        });
+
+        setRequests(sorted);
+        setFilteredRequests(sorted);
         setLoading(false);
       } catch (error) {
         console.error("Error loading requests:", error);
@@ -39,8 +53,12 @@ export default function OwnRequestView() {
 
   useEffect(() => {
     const filtered = requests.filter(req => {
-      const matchesCategory = category ? req.category && req.category.toLowerCase().includes(category.toLowerCase()) : true;
-      const matchesCity = city ? req.address && req.address.toLowerCase().includes(city.toLowerCase()) : true;
+      const matchesCategory = category
+        ? req.category && req.category.toLowerCase().includes(category.toLowerCase())
+        : true;
+      const matchesCity = city
+        ? req.address && req.address.toLowerCase().includes(city.toLowerCase())
+        : true;
       return matchesCategory && matchesCity;
     });
     setFilteredRequests(filtered);
@@ -52,6 +70,7 @@ export default function OwnRequestView() {
     <div className="flex flex-col lg:flex-row gap-6 p-6">
       <NavBar />
 
+      {/* Sidebar pentru filtrare */}
       <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Filter by category and city</h2>
 
@@ -80,6 +99,7 @@ export default function OwnRequestView() {
         </div>
       </aside>
 
+      {/* Grid pentru cereri */}
       <section className="flex-1 mt-24">
         {filteredRequests.length === 0 ? (
           <p className="text-gray-600">No requests found matching the filters.</p>

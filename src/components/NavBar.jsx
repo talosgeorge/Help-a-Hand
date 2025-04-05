@@ -70,7 +70,7 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                     Requests
                                 </Link>
                                 <button onClick={onOpenCreateRequest} className="hover:text-green-500">
-                                CreateRequest
+                                    CreateRequest
                                 </button>
                             </li>
                         )}
@@ -87,19 +87,21 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                 {/* Button pentru Contul Meu */}
                                 <button className="hover:text-green-500">
                                     {/* Dacă există imaginea încărcată, o afișăm în locul inițialelor */}
-                                    {image ? (
-                                        <img
-                                            src={image}
-                                            alt="User"
-                                            className="w-10 h-10 rounded-full object-cover"
-                                        />
-                                    ) : (
-                                        userData && (
-                                            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold transition-colors duration-300">
-                                                {getInitials(userData.email)}
-                                            </div>
-                                        )
-                                    )}
+                                    <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
+                                        {image ? (
+                                            <img
+                                                src={image}
+                                                alt="User"
+                                                className="w-full h-full object-cover"  // Asigură-te că imaginea umple cerculețul fără a se deforma
+                                            />
+                                        ) : (
+                                            userData && (
+                                                <div className="w-10 h-10 bg-green-500 text-white flex items-center justify-center text-sm font-semibold transition-colors duration-300">
+                                                    {getInitials(userData.email)}
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
                                 </button>
                             </div>
 

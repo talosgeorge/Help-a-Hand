@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Beneficiar from "./components/Beneficiar";
 import Voluntar from "./components/Voluntar";
+import RequestView from "./components/RequestView";
 import "./index.css";
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
       />
       <Route path="/beneficiar" element={<Beneficiar />} />
       <Route path="/voluntar" element={<Voluntar />} />
+      <Route path="/beneficiar/requests" element={<RequestView />} />
       </Routes>
   );
 }

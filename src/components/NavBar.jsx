@@ -52,10 +52,10 @@ export default function NavBar({ role }) {
                                 Contul Meu
                             </button>
                             {userData && (
-                                <div className="absolute right- w-60 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg w-48 p-4 hidden group-hover:block">
-                                    <p><strong>Nume:</strong> {userData.nume || "N/A"}</p>
-                                    <p><strong>Email:</strong> {userData.email}</p>
-                                    <p><strong>Rol:</strong> {userData.role}</p>
+                                <div className="absolute right-0 w-60 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 hidden group-hover:block">
+                                    <p className="text-sm"><strong>Nume:</strong> {userData.nume || "N/A"}</p>
+                                    <p className="text-sm"><strong>Email:</strong> {userData.email}</p>
+                                    <p className="text-sm"><strong>Rol:</strong> {userData.role}</p>
                                 </div>
                             )}
                         </li>

@@ -1,10 +1,9 @@
-import "./css/navBarCss.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-export default function NavBar() {
+export default function NavBar({ role }) {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
@@ -25,20 +24,35 @@ export default function NavBar() {
     }, []);
 
     return (
-        <header>
-            <nav className="nav-bar">
-                <div className="logo">
-                    <h2>Help-A-Hand</h2>
+        <header className="w-full fixed top-0 left-0 z-10 bg-white shadow-md">
+            <nav className="max-w-screen-xl mx-auto flex items-center justify-between p-4">
+                <div className="flex float-left">
+                    <Link to="/" className="text-green-500 text-xl font-semibold float-left">
+                        Help-a-Hand
+                    </Link>
                 </div>
-                <div className="menu-items">
-                    <ul>
-                        <li>
-                            <Link to="/voluntar/requests">Requests</Link>
-                        </li>
-                        <li className="dropdown">
-                            Contul Meu
+                <div className="flex items-center space-x-8 text-lg text-gray-700">
+                    <ul className="flex space-x-8">
+                        {role === "beneficiar" && (
+                            <li>
+                                <Link to="/beneficiar/requests" className="hover:text-green-500">
+                                    Requests
+                                </Link>
+                            </li>
+                        )}
+                        {role === "voluntar" && (
+                            <li>
+                                <Link to="/voluntar/requests" className="hover:text-green-500">
+                                    Requests
+                                </Link>
+                            </li>
+                        )}
+                        <li className="relative">
+                            <button className="hover:text-green-500">
+                                Contul Meu
+                            </button>
                             {userData && (
-                                <div className="dropdown-content">
+                                <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg w-48 p-4 hidden group-hover:block">
                                     <p><strong>Nume:</strong> {userData.nume || "N/A"}</p>
                                     <p><strong>Email:</strong> {userData.email}</p>
                                     <p><strong>Rol:</strong> {userData.role}</p>

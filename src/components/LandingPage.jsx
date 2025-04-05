@@ -1,12 +1,33 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function LandingPage() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("opacity-0", "translate-y-10");
+            entry.target.classList.add("opacity-100", "translate-y-0");
+            observer.unobserve(entry.target); // opțional: animăm o singură dată
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    const target = document.querySelector("#how-it-works");
+    if (target) observer.observe(target);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen w-full bg-gray-100 flex flex-col">
       {/* Header */}
       <header className="bg-white shadow-md w-full">
         <div className="px-10 py-5 flex justify-between items-center w-full">
-          <h1 className="text-5xl font-bold text-green-500">Help a Hand</h1>
+          <h1 className="text-4xl font-bold text-green-500">Help a Hand</h1>
           <nav className="space-x-8">
             <Link
               to="/login"
@@ -56,7 +77,10 @@ export default function LandingPage() {
       </section>
 
       {/* Cum funcționează aplicația */}
-      <section className="bg-white py-20 px-10">
+      <section
+        id="how-it-works"
+        className="bg-white py-20 px-10 transition-all duration-700 ease-out opacity-0 translate-y-10"
+      >
         <div className="max-w-6xl mx-auto text-center">
           <h3 className="text-4xl font-semibold text-gray-900 mb-12">
             Cum funcționează aplicația?

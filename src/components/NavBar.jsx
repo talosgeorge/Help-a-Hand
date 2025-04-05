@@ -12,8 +12,8 @@ export default function NavBar({ role, onOpenCreateRequest }) {
     const [dropdownTimeout, setDropdownTimeout] = useState(null);  // Timer state for the delay
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            const user = auth.currentUser;
+        // Verificarea sesiunii utilizatorului pentru a preveni deconectarea la refresh
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
                 const docRef = doc(db, "users", user.uid);
                 const userDoc = await getDoc(docRef);
@@ -23,9 +23,12 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                         ...userDoc.data(),
                     });
                 }
+            } else {
+                setUserData(null); // Dacă nu este logat, resetează userData
             }
-        };
-        fetchUserData();
+        });
+
+        return () => unsubscribe(); // Curățăm subscriberea când componenta se dezasociază
     }, []);
 
     // Functie pentru a extrage primele 2 initiale din email
@@ -98,12 +101,12 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                 </button>
                             </li>
                         )}
-                       {role === "voluntar" && (
-                        <li className="flex items-center">
-                        <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
-                            Requests
-                        </Link>
-                         </li>
+                        {role === "voluntar" && (
+                            <li className="flex items-center">
+                                <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
+                                    Requests
+                                </Link>
+                            </li>
                         )}
                         <li
                             className="relative flex items-center space-x-2"

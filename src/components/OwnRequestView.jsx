@@ -1,115 +1,112 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { db } from "../firebase";
 import RequestContainer from "./RequestContainer";
 import NavBar from "./NavBar";
 
 export default function OwnRequestView() {
-    const [requests, setRequests] = useState([]);
-    const [filteredRequests, setFilteredRequests] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedCategory, setSelectedCategory] = useState("Toate");
-    const [userEmail, setUserEmail] = useState("");
+  const [requests, setRequests] = useState([]);
+  const [filteredRequests, setFilteredRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [category, setCategory] = useState(""); // New state for category filter
+  const [city, setCity] = useState(""); // New state for city filter
 
-    useEffect(() => {
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-            setUserEmail(currentUser.email);
-        }
-    }, []);
-
-    useEffect(() => {
-        const fetchRequests = async () => {
-            try {
-                const snapshot = await getDocs(collection(db, "requests"));
-                const allRequests = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-
-                const ownRequests = allRequests.filter(req => req.email === userEmail);
-                setRequests(ownRequests);
-                setFilteredRequests(ownRequests);
-                setLoading(false);
-            } catch (error) {
-                console.error("Eroare la încărcarea cererilor:", error);
-            }
-        };
-
-        if (userEmail) fetchRequests();
-    }, [userEmail]);
-
-    const handleCategoryFilter = (category) => {
-        setSelectedCategory(category);
-        if (category === "Toate") {
-            setFilteredRequests(requests);
-        } else {
-            const filtered = requests.filter(req => req.category === category);
-            setFilteredRequests(filtered);
-        }
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "requests"));
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setRequests(data);
+        setFilteredRequests(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading requests:", error);
+      }
     };
+    fetchRequests();
+  }, []);
 
-    const categories = ["Toate", ...new Set(requests.map(req => req.category))];
+  // Handle changes in category and city
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+  };
 
-    const deleteRequest = async (requestId) => {
-        try {
-            // Delete request from Firestore
-            const requestRef = doc(db, "requests", requestId);
-            await deleteDoc(requestRef);
+  const handleCityChange = (e) => {
+    setCity(e.target.value);
+  };
 
-            // Update the local state to remove the deleted request
-            setRequests(requests.filter(req => req.id !== requestId));
-            setFilteredRequests(filteredRequests.filter(req => req.id !== requestId));
+  // Filter the requests based on category and city
+  useEffect(() => {
+    const filtered = requests.filter((req) => {
+      const matchesCategory =
+        category ? req.category && req.category.toLowerCase().includes(category.toLowerCase()) : true;
+      const matchesCity = city ? req.address && req.address.toLowerCase().includes(city.toLowerCase()) : true;
+      return matchesCategory && matchesCity;
+    });
+    setFilteredRequests(filtered);
+  }, [category, city, requests]);
 
-            alert("Cererea a fost ștearsă!");
-        } catch (error) {
-            console.error("Eroare la ștergerea cererii:", error);
-        }
-    };
+  // Handle deleting a request
+  const handleDeleteRequest = async (requestId) => {
+    try {
+      await deleteDoc(doc(db, "requests", requestId)); // Delete the request from Firestore
+      setRequests((prevRequests) => prevRequests.filter((req) => req.id !== requestId)); // Update local state
+      setFilteredRequests((prevRequests) => prevRequests.filter((req) => req.id !== requestId)); // Update filtered requests
+    } catch (error) {
+      console.error("Error deleting request:", error);
+    }
+  };
 
-    if (loading) return <p className="p-6">Se încarcă cererile tale...</p>;
+  if (loading) return <p className="p-6">Loading requests...</p>;
 
-    return (
-        <div className="flex flex-col lg:flex-row gap-6 p-6">
-            <NavBar />
-            <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
-                <h2 className="text-xl font-semibold mb-4 text-gray-800">Categoriile tale</h2>
-                <div className="flex flex-col gap-2">
-                    {categories.map((cat, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handleCategoryFilter(cat)}
-                            className={`text-left px-3 py-2 rounded-lg font-medium ${selectedCategory === cat
-                                ? "bg-green-500 text-white"
-                                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                                }`}
-                        >
-                            {cat}
-                        </button>
-                    ))}
-                </div>
-            </aside>
+  return (
+    <div className="flex flex-col lg:flex-row gap-6 p-6">
+      <NavBar />
 
-            <section className="flex-1 mt-24">
-                {filteredRequests.length === 0 ? (
-                    <p className="text-gray-600">Nu ai cereri în această categorie.</p>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                        {filteredRequests.map((req) => (
-                            <div key={req.id} className="relative flex flex-col h-full">
-                                <RequestContainer request={req} />
-                                <div className="flex-grow" /> {/* This ensures the space grows and button goes to bottom */}
-                                <button
-                                    onClick={() => deleteRequest(req.id)}
-                                    className="mt-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-700 transition"
-                                >
-                                    Șterge
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </section>
+      {/* Sidebar filter */}
+      <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Filter by category and city</h2>
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor="category" className="font-medium">Category</label>
+          <input
+            type="text"
+            id="category"
+            value={category}
+            onChange={handleCategoryChange}
+            placeholder="Enter category"
+            className="border border-gray-300 p-2 rounded-lg"
+          />
         </div>
-    );
+
+        <div className="flex flex-col gap-2 mt-4">
+          <label htmlFor="city" className="font-medium">City</label>
+          <input
+            type="text"
+            id="city"
+            value={city}
+            onChange={handleCityChange}
+            placeholder="Enter city"
+            className="border border-gray-300 p-2 rounded-lg"
+          />
+        </div>
+      </aside>
+
+      {/* Grid of requests */}
+      <section className="flex-1 mt-24">
+        {filteredRequests.length === 0 ? (
+          <p className="text-gray-600">No requests found matching the filters.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+            {filteredRequests.map((req) => (
+              <RequestContainer key={req.id} request={req} onDelete={handleDeleteRequest} />
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
 }

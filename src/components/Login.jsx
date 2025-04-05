@@ -1,7 +1,7 @@
-// src/components/Login.jsx
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -10,10 +10,22 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            alert("Autentificat cu succes!");
+            // Sign in the user with Firebase Authentication
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Fetch the user's role from Firestore
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+
+            if (userDoc.exists()) {
+                const role = userDoc.data().role;
+                // Show the role in an alert
+                alert(`Login successful! Your role is: ${role}`);
+            } else {
+                alert("User data not found in Firestore.");
+            }
         } catch (error) {
-            alert("Eroare: " + error.message);
+            alert("Error: " + error.message);
         }
     };
 

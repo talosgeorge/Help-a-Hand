@@ -90,7 +90,7 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                     <ul className="flex space-x-8">
                         {role === "beneficiar" && (
                             <li className="flex items-center">
-                                <Link to="/beneficiar/requests" className="hover:text-green-500 text-lg">
+                                <Link to="/beneficiar/requests" className="hover:text-green-500 text-lg pr-5">
                                     Requests
                                 </Link>
                                 <button onClick={onOpenCreateRequest} className="hover:text-green-500">
@@ -165,7 +165,7 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span><strong>Email:</strong></span>
-                                            <span className="ml-2">{userData.email || "N/A"}</span>  {/* Adăugat spațiu între Email: și email */}
+                                            <span className="ml-2">{userData.email || "N/A"}</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span><strong>Rol:</strong></span>
@@ -175,10 +175,13 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                             <span><strong>Telefon:</strong></span>
                                             <span>{userData.phone || "N/A"}</span>
                                         </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span><strong>Oras:</strong></span>
-                                            <span>{userData.city || "N/A"}</span>
+
+                                        {/* Modificare pentru a pune Oras pe aceeași linie */}
+                                        <div className="flex justify-start text-sm">
+                                            <span className="font-semibold">Oras:</span>
+                                            <span className="ml-2 whitespace-nowrap">{userData.city || "N/A"}</span>
                                         </div>
+
                                         <div className="flex justify-between text-sm">
                                             <span><strong>Adresa:</strong></span>
                                             <span>{userData.street || "N/A"}</span>

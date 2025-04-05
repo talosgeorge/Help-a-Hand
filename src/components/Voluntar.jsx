@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import NavBar from './NavBar';
 import { doc, getDoc } from 'firebase/firestore';
-import { Link } from 'react-router-dom';
+import {Link} from "react-router-dom";
 
 export default function Voluntar() {
     const [name, setName] = useState('');
-    const [showCreateRequest, setShowCreateRequest] = useState(false);
 
     useEffect(() => {
         const fetchUserName = async () => {
@@ -17,11 +16,7 @@ export default function Voluntar() {
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        setName(
-                            data.name
-                                ? data.name.charAt(0).toUpperCase() + data.name.slice(1)
-                                : 'Fără nume'
-                        );
+                        setName(data.name.charAt(0).toUpperCase() + data.name.slice(1) || 'Fără nume');
                     } else {
                         setName('Fără document');
                     }
@@ -37,9 +32,6 @@ export default function Voluntar() {
         fetchUserName();
     }, []);
 
-    const handleOpenCreateRequest = () => setShowCreateRequest(true);
-    const handleCloseCreateRequest = () => setShowCreateRequest(false);
-
     return (
         <div className="min-h-screen bg-[#f9fafb]">
             <NavBar role="voluntar" />
@@ -47,107 +39,82 @@ export default function Voluntar() {
             <main className="pt-20 px-6 flex flex-col items-center">
                 <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-2xl text-center">
                     <h1 className="text-3xl font-bold text-green-700 mb-2">
-                        Salut, {name}! <span className="animate-bounce inline-block">👋</span>
+                        Salut, {name}! <span className="animate-bounce inline-block">🤝</span>
                     </h1>
-                    <p className="text-gray-600 mb-6">Cum te putem ajuta azi?</p>
+                    <p className="text-gray-600 mb-6">Gata să faci o diferență azi?</p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <button
-                            onClick={handleOpenCreateRequest}
-                            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md shadow-green-300 w-full sm:w-auto min-w-[150px]"
-                        >
-                            🖐 Ajută
-                        </button>
-
-                        <Link
-                            to="/voluntar/requests"
-                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px] text-center"
-                        >
-                            📋 Cererile Disponibile
+                        <Link to="/voluntar/requests" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
+                            📋 Cereri disponibile
                         </Link>
 
                         <button
-                            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]"
-                        >
-                            🧑‍🤝‍🧑 Cereri Aproape
+                            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
+                            ✅ Cererile mele acceptate
                         </button>
 
                         <button
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]"
-                        >
-                            📜 Istoric Cereri
+                            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
+                            📍 Voluntariat în zona ta
+                        </button>
+
+                        <button
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
+                            🕓 Istoric ajutor
                         </button>
                     </div>
                 </div>
 
-                {/* GRID de info și idei */}
-                <div className="mt-5 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Grid info */}
+                <div className="mt-8 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div
-                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer"
-                    >
-                        <p className="text-lg font-medium text-gray-800">📦 Ultima cerere</p>
-                        <p className="text-sm text-gray-500 mt-2">„Colet din Poștă”</p>
-                        <p className="text-sm text-gray-400">Status: Așteaptă voluntar</p>
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
+                        <p className="text-lg font-medium text-gray-800">🧾 Ultima cerere acceptată</p>
+                        <p className="text-sm text-gray-500 mt-2">„Farmacie pentru vecina Maria”</p>
+                        <p className="text-sm text-gray-400">Status: În curs de finalizare</p>
                     </div>
 
                     <div
-                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer"
-                    >
-                        <p className="text-lg font-medium text-gray-800">👥 Cereri disponibile</p>
-                        <p className="text-sm text-gray-500 mt-2">3 cereri în zona ta</p>
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
+                        <p className="text-lg font-medium text-gray-800">📍 Cereri apropiate</p>
+                        <p className="text-sm text-gray-500 mt-2">5 cereri la <strong>sub 1 km</strong> de tine</p>
                     </div>
 
                     <div
-                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer"
-                    >
-                        <p className="text-lg font-medium text-gray-800">❤️ Cereri preferate</p>
-                        <p className="text-sm text-gray-500 mt-2">Niciuna salvată momentan</p>
+                        className="bg-[#f0fdf4] p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
+                        <p className="text-lg font-medium text-gray-800">🎉 Ai ajutat 3 persoane!</p>
+                        <p className="text-sm text-gray-600 mt-2">Felicitări, contribuția ta contează!</p>
                     </div>
 
                     <div
-                        className="bg-[#f0fdf4] p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer"
-                    >
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
                         <p className="text-lg font-medium text-gray-800">ℹ️ Ai nevoie de ajutor?</p>
                         <p className="text-sm text-gray-600 mt-2">
-                            Suntem aici pentru orice întrebare sau nevoie zilnică. Cere ajutor cu încredere!
+                            Dacă ai întrebări despre cereri sau voluntariat, suntem aici pentru tine.
                         </p>
                     </div>
 
                     <div
-                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer"
-                    >
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
                         <p className="text-lg font-medium text-gray-800">📞 Contact suport</p>
-                        <p className="text-sm text-gray-600 mt-2">0720 123 456 (L-V 9:00–17:00)</p>
+                        <p className="text-sm text-gray-600 mt-2">0720 123 456 <br/>support@helpa.ro</p>
                     </div>
 
                     <div
-                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer"
-                    >
-                        <p className="text-lg font-medium text-gray-800">📘 Ghid de utilizare</p>
-                        <p className="text-sm text-gray-600 mt-2">Cum funcționează aplicația și ce poți cere?</p>
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
+                        <p className="text-lg font-medium text-gray-800">🧠 Sfaturi utile</p>
+                        <p className="text-sm text-gray-600 mt-2">
+                            Zâmbește, ascultă și oferă ajutorul cu empatie. Uneori, o vorbă bună contează enorm.
+                        </p>
                     </div>
                 </div>
 
-                {/* Feedback subtle */}
+
+                {/* Feedback footer */}
                 <p className="text-xs text-gray-400 text-center mt-5">
-                    Ai sugestii? Spune-ne ce ai vrea să adăugăm 💡
+                    Vrei să vezi un istoric complet al ajutoarelor? Funcționalitate în curând 🔧
                 </p>
             </main>
-
-            {/* MODAL */}
-            {showCreateRequest && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
-                        <button
-                            onClick={handleCloseCreateRequest}
-                            className="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl"
-                        >
-                            &times;
-                        </button>
-                        <CreateRequestContainer onClose={handleCloseCreateRequest} />
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

@@ -102,12 +102,6 @@ export default function NavBar({ role, onOpenCreateRequest }) {
         </div>
 
         <div className="flex items-center space-x-6 text-lg text-gray-700">
-          {role === "voluntar" && (
-            <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
-              Vezi cererile disponibile
-            </Link>
-          )}
-
           {/* Buton alegere pachet doar pentru beneficiar */}
           {userData?.role === "beneficiar" && (
             <div

@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBar from './navbarComponent';
+import NavBar from './NavBar';
 
 export default function Voluntar() {
     return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../firebase";
+import { collection, getDocs, deleteDoc, doc, getDoc } from "firebase/firestore";
+import { db, auth } from "../firebase";
 import RequestContainer from "./RequestContainer";
 import NavBar from "./NavBar";
 
@@ -10,6 +10,27 @@ export default function OwnRequestView() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState(""); // New state for category filter
   const [city, setCity] = useState(""); // New state for city filter
+  const [userRole, setUserRole] = useState(""); // State for storing user role
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUserRole(data.role); // Presupunem că rolul este salvat în documentul utilizatorului
+          }
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+        }
+      }
+    };
+
+    fetchUserRole();
+  }, []);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -102,7 +123,11 @@ export default function OwnRequestView() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {filteredRequests.map((req) => (
-              <RequestContainer key={req.id} request={req} onDelete={handleDeleteRequest} />
+              <RequestContainer
+                key={req.id}
+                request={req}
+                onDelete={userRole === "beneficiar" ? handleDeleteRequest : null} // Only show delete button for "beneficiar"
+              />
             ))}
           </div>
         )}

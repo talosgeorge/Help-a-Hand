@@ -47,12 +47,12 @@ export default function NavBar({ role }) {
                                 </Link>
                             </li>
                         )}
-                        <li className="relative">
+                        <li className="relative group">
                             <button className="hover:text-green-500">
                                 Contul Meu
                             </button>
                             {userData && (
-                                <div className="absolute right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg w-48 p-4 hidden group-hover:block">
+                                <div className="absolute right- w-60 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg w-48 p-4 hidden group-hover:block">
                                     <p><strong>Nume:</strong> {userData.nume || "N/A"}</p>
                                     <p><strong>Email:</strong> {userData.email}</p>
                                     <p><strong>Rol:</strong> {userData.role}</p>

@@ -90,9 +90,11 @@ export default function NavBar({ role , onOpenCreateRequest }) {
                             {/* Dropdown-ul */}
                             {userData && isDropdownVisible && (
                                 <div className="absolute left-1/2 top-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 transform -translate-x-1/2">
-                                    <p className="text-sm"><strong>Nume:</strong> {userData.nume || "N/A"}</p>
+                                    <p className="text-sm"><strong>Nume:</strong> {userData.name || "N/A"}</p>
                                     <p className="text-sm"><strong>Email:</strong> {userData.email}</p>
                                     <p className="text-sm"><strong>Rol:</strong> {userData.role}</p>
+                                    <p className="text-sm"><strong>Telefon:</strong> {userData.phone || "N/A"}</p>
+                                    <p className="text-sm"><strong>Adresa:</strong> {userData.street || "N/A"}</p>
                                     {/* P tag pentru deconectare */}
                                     <p
                                         onClick={handleLogout}

@@ -6,17 +6,20 @@ export default function LandingPage() {
       {/* Header */}
       <header className="bg-white shadow-md w-full">
         <div className="px-8 py-4 flex justify-between items-center w-full">
-          <h1 className="text-2xl font-bold text-blue-600">Help a Hand</h1>
+          <h1 className="text-4xl font-bold text-green-500">Help a Hand</h1>
           <nav className="space-x-6">
             <Link
               to="/login"
-              className="inline-block px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700"
+              className="text-green-500 font-semibold hover:text-white hover:bg-green-500 px-4 py-2 rounded transition"
             >
               Login
             </Link>
-            <a href="#" className="text-gray-700 hover:text-blue-600">
-              Register
-            </a>
+            <Link
+              to="/register"
+              className="text-green-500 font-semibold hover:text-white hover:bg-green-500 px-4 py-2 rounded transition"
+            >
+              Înregistrare
+            </Link>
           </nav>
         </div>
       </header>
@@ -30,12 +33,12 @@ export default function LandingPage() {
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
             Fiecare mână întinsă contează.
           </p>
-          <a
-            href="#"
-            className="inline-block px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700"
+          <Link
+            to="/register"
+            className="inline-block px-8 py-4 bg-green-500 text-white text-lg font-semibold rounded-lg hover:bg-green-600 rounded transition"
           >
             Get Started
-          </a>
+          </Link>
         </div>
       </main>
 

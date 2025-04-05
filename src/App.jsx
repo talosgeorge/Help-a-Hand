@@ -1,15 +1,19 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Beneficiar from "./components/Beneficiar";
 import Voluntar from "./components/Voluntar";
+import PrivateRoute from "./components/PrivateRoute"; // Importă componenta PrivateRoute
 import "./index.css";
 
 export default function App() {
   return (
     <Routes>
+      {/* Ruta publică */}
       <Route path="/" element={<LandingPage />} />
+      
+      {/* Ruta pentru înregistrare */}
       <Route
         path="/register"
         element={
@@ -21,6 +25,8 @@ export default function App() {
           </div>
         }
       />
+
+      {/* Ruta pentru login */}
       <Route
         path="/login"
         element={
@@ -32,8 +38,12 @@ export default function App() {
           </div>
         }
       />
-      <Route path="/beneficiar" element={<Beneficiar />} />
-      <Route path="/voluntar" element={<Voluntar />} />
+
+      {/* Rute protejate cu PrivateRoute */}
+      <Route element={<PrivateRoute />}>
+        <Route path="/beneficiar" element={<Beneficiar />} />
+        <Route path="/voluntar" element={<Voluntar />} />
+      </Route>
     </Routes>
   );
 }

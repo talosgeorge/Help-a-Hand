@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 
+import Beneficiar from "./Beneficiar";
+
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -19,8 +23,16 @@ export default function Login() {
 
             if (userDoc.exists()) {
                 const role = userDoc.data().role;
-                // Show the role in an alert
-                alert(`Login successful! Your role is: ${role}`);
+
+                if (role === "beneficiar") {
+                    alert("Redirecting to Beneficiary page...");
+                    navigate("/beneficiar");
+                }
+                else if (role === "voluntar") {
+                    alert("Redirecting to Volunteer page...");
+                } else {
+                    alert("Unknown role.");
+                }
             } else {
                 alert("User data not found in Firestore.");
             }

@@ -98,12 +98,12 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                 </button>
                             </li>
                         )}
-                        {role === "voluntar" && (
-                            <li className="flex items-center">
-                                <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
-                                    Requests
-                                </Link>
-                            </li>
+                       {role === "voluntar" && (
+                        <li className="flex items-center">
+                        <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
+                            Requests
+                        </Link>
+                         </li>
                         )}
                         <li
                             className="relative flex items-center space-x-2"
@@ -123,9 +123,9 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                         />
                                     ) : (
                                         userData && (
-                                            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold group-hover:bg-green-600 transition-colors duration-300">
-                                                {getInitials(userData.email)}
-                                            </div>
+                                        <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold group-hover:bg-green-600 transition-colors duration-300">
+                                            {getInitials(userData.email)}
+                                        </div>
                                         )
                                     )}
                                 </button>

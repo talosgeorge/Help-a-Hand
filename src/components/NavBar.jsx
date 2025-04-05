@@ -82,8 +82,8 @@ export default function NavBar({ role, onOpenCreateRequest }) {
     };
 
     return (
-        <header className="w-full fixed top-0 left-0 z-10 bg-white shadow-md">
-            <nav className="max-w-screen-xl mx-auto flex items-center justify-between p-4">
+        <header className="w-full fixed top-0 left-0 z-20 bg-white shadow-sm">
+            <nav className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-2 h-16">
                 <div className="flex float-left">
                     <Link to="/" className="text-green-500 text-3xl font-semibold float-left">
                         Help-a-Hand
@@ -91,16 +91,6 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                 </div>
                 <div className="flex items-center space-x-8 text-lg text-gray-700">
                     <ul className="flex space-x-8">
-                        {role === "beneficiar" && (
-                            <li className="flex items-center">
-                                <Link to="/beneficiar/requests" className="hover:text-green-500 text-lg pr-5">
-                                    Vezi propriile tale cereri
-                                </Link>
-                                <button onClick={onOpenCreateRequest} className="hover:text-green-500">
-                                    Creează cerere
-                                </button>
-                            </li>
-                        )}
                         {role === "voluntar" && (
                             <li className="flex items-center">
                                 <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
@@ -126,7 +116,8 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                         />
                                     ) : (
                                         userData && (
-                                            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold group-hover:bg-green-600 transition-colors duration-300">
+                                            <div
+                                                className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold group-hover:bg-green-600 transition-colors duration-300">
                                                 {getInitials(userData.email)}
                                             </div>
                                         )
@@ -136,7 +127,8 @@ export default function NavBar({ role, onOpenCreateRequest }) {
 
                             {/* Dropdown-ul */}
                             {userData && isDropdownVisible && (
-                                <div className="absolute left-1/2 top-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 transform -translate-x-1/2">
+                                <div
+                                    className="absolute left-1/2 top-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg p-4 transform -translate-x-1/2">
                                     <div className="flex flex-col space-y-2">
                                         {/* Adaugă imagine */}
                                         <div className="text-center">

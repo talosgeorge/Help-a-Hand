@@ -3,9 +3,9 @@ import { auth, db } from '../firebase';
 import NavBar from './NavBar';
 import CreateRequestContainer from './CreateRequestContainer';
 import { doc, getDoc } from "firebase/firestore";
+import { Link } from "react-router-dom";
 
 export default function Beneficiar() {
-    const [email, setEmail] = useState('');
     const [showCreateRequest, setShowCreateRequest] = useState(false);
     const [name, setName] = useState('');
 
@@ -16,13 +16,14 @@ export default function Beneficiar() {
                 try {
                     const docRef = doc(db, "users", user.uid);
                     const docSnap = await getDoc(docRef);
-
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        console.log("User data:", data);
-                        setName(data.name || "Fără nume");
+                        setName(
+                            data.name
+                                ? data.name.charAt(0).toUpperCase() + data.name.slice(1)
+                                : "Fără nume"
+                        );
                     } else {
-                        console.log("No such document!");
                         setName("Fără document");
                     }
                 } catch (err) {
@@ -37,74 +38,99 @@ export default function Beneficiar() {
         fetchUserName();
     }, []);
 
-
-
-    const handleOpenCreateRequest = () => {
-        setShowCreateRequest(true);
-    };
-
-    const handleCloseCreateRequest = () => {
-        setShowCreateRequest(false);
-    };
-
-    console.log(import.meta.env.VITE_GOOGLE_MAPS_API_KEY);
+    const handleOpenCreateRequest = () => setShowCreateRequest(true);
+    const handleCloseCreateRequest = () => setShowCreateRequest(false);
 
     return (
         <div className="min-h-screen bg-[#f9fafb]">
             <NavBar role="beneficiar" onOpenCreateRequest={handleOpenCreateRequest} />
 
-            <main className="pt-28 px-6 flex flex-col items-center">
+            <main className="pt-16 px-6 flex flex-col items-center">
+                <div className="w-full max-w-2xl text-left mb-4">
+                </div>
+
                 <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-2xl text-center">
-                    <h1 className="text-3xl font-bold text-green-700 mb-2">Salut, {name}!</h1>
+                    <h1 className="text-3xl font-bold text-green-700 mb-2">
+                        Salut, {name}! <span className="animate-bounce inline-block">👋</span>
+                    </h1>
                     <p className="text-gray-600 mb-6">Cu ce te putem ajuta azi?</p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <button
                             onClick={handleOpenCreateRequest}
-                            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition"
+                            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md shadow-green-300 w-full sm:w-auto min-w-[150px]"
                         >
                             🖐 Cere Ajutor
                         </button>
 
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition">
+                        <Link
+                            to="/beneficiar/requests"
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px] text-center"
+                        >
                             📋 Cererile Mele
-                        </button>
+                        </Link>
 
-                        <button className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-lg transition">
+                        <button
+                            className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
                             🧑‍🤝‍🧑 Voluntari Aproape
                         </button>
 
-                        <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg transition">
+                        <button
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
                             📜 Istoric Cereri
                         </button>
                     </div>
                 </div>
 
                 {/* GRID de info și idei */}
-                <div className="mt-10 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+                <div className="mt-5 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <div
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
                         <p className="text-lg font-medium text-gray-800">📦 Ultima cerere</p>
                         <p className="text-sm text-gray-500 mt-2">„Colet din Poștă”</p>
                         <p className="text-sm text-gray-400">Status: Așteaptă voluntar</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+                    <div
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
                         <p className="text-lg font-medium text-gray-800">👥 Voluntari disponibili</p>
                         <p className="text-sm text-gray-500 mt-2">3 voluntari în zona ta</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+                    <div
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
                         <p className="text-lg font-medium text-gray-800">❤️ Voluntari preferați</p>
                         <p className="text-sm text-gray-500 mt-2">Niciunul salvat momentan</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+                    <div
+                        className="bg-[#f0fdf4] p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
                         <p className="text-lg font-medium text-gray-800">ℹ️ Ai nevoie de ajutor?</p>
-                        <p className="text-sm text-gray-500 mt-2">
+                        <p className="text-sm text-gray-600 mt-2">
                             Suntem aici pentru orice întrebare sau nevoie zilnică. Cere ajutor cu încredere!
                         </p>
                     </div>
+
+                    <div
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
+                        <p className="text-lg font-medium text-gray-800">📞 Contact suport</p>
+                        <p className="text-sm text-gray-600 mt-2">0720 123 456 (L-V 9:00–17:00)</p>
+                    </div>
+
+                    <div
+                        className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
+                        <p className="text-lg font-medium text-gray-800">📘 Ghid de utilizare</p>
+                        <p className="text-sm text-gray-600 mt-2">Cum funcționează aplicația și ce poți cere?</p>
+                    </div>
+
                 </div>
+
+
+                {/* Feedback subtle */}
+                <p className="text-xs text-gray-400 text-center mt-5">
+                    Ai sugestii? Spune-ne ce ai vrea să adăugăm 💡
+                </p>
             </main>
 
             {/* MODAL */}
@@ -117,12 +143,10 @@ export default function Beneficiar() {
                         >
                             &times;
                         </button>
-                        <CreateRequestContainer onClose={handleCloseCreateRequest} />
+                        <CreateRequestContainer onClose={handleCloseCreateRequest}/>
                     </div>
                 </div>
             )}
         </div>
     );
-
-
 }

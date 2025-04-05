@@ -26,7 +26,7 @@ export default function NavBar({ role }) {
     return (
         <header className="w-full fixed top-0 left-0 z-10 bg-white shadow-md">
             <nav className="max-w-screen-xl mx-auto flex items-center justify-between p-4">
-                <div className="flex items-center">
+                <div className="flex float-left">
                     <Link to="/" className="text-green-500 text-xl font-semibold float-left">
                         Help-a-Hand
                     </Link>

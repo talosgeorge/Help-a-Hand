@@ -4,7 +4,7 @@ import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { signOut as firebaseSignOut } from "firebase/auth";
 
-export default function NavBar({ role , onOpenCreateRequest }) {
+export default function NavBar({ role, onOpenCreateRequest }) {
     const [userData, setUserData] = useState(null);
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const navigate = useNavigate();
@@ -58,7 +58,7 @@ export default function NavBar({ role , onOpenCreateRequest }) {
                                     Requests
                                 </Link>
                                 <button onClick={onOpenCreateRequest} className="hover:text-green-500">
-                                CreateRequest
+                                    CreateRequest
                                 </button>
                             </li>
                         )}
@@ -94,6 +94,7 @@ export default function NavBar({ role , onOpenCreateRequest }) {
                                     <p className="text-sm"><strong>Email:</strong> {userData.email}</p>
                                     <p className="text-sm"><strong>Rol:</strong> {userData.role}</p>
                                     <p className="text-sm"><strong>Telefon:</strong> {userData.phone || "N/A"}</p>
+                                    <p className="text-sm"><strong>Oras:</strong> {userData.city || "N/A"}</p>
                                     <p className="text-sm"><strong>Adresa:</strong> {userData.street || "N/A"}</p>
                                     {/* P tag pentru deconectare */}
                                     <p

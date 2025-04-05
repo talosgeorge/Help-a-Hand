@@ -43,73 +43,126 @@ export default function Register() {
   return (
     <form onSubmit={handleRegister} className="space-y-5">
       {error && <div className="text-red-500">{error}</div>}
+      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+        <div>
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Nume Utilizator
+          </label>
+          <input
+            //onChange={(e) => setUsername(e.target.value)}
+            type="text"
+            id="username"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Nume Utilizator"
+            required
+          />
+        </div>
 
-      <div>
-        <label
-          htmlFor="username"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Nume Utilizator
-        </label>
-        <input
-          //onChange={(e) => setUsername(e.target.value)}
-          type="text"
-          id="username"
-          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Nume Utilizator"
-          required
-        />
-      </div>
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Email
+          </label>
+          <input
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            id="email"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Email"
+            required
+          />
+        </div>
 
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Email
-        </label>
-        <input
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          id="email"
-          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Your Email"
-          required
-        />
-      </div>
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+          <input
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            id="password"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder=""
+            required
+          />
+        </div>
 
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Password
-        </label>
-        <input
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          id="password"
-          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="••••••••"
-          required
-        />
-      </div>
+        <div>
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Confirm Password
+          </label>
+          <input
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            type="password"
+            id="confirmPassword"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder=""
+            required
+          />
+        </div>
 
-      <div>
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Confirm Password
-        </label>
-        <input
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          type="password"
-          id="confirmPassword"
-          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="••••••••"
-          required
-        />
+        <div>
+          <label
+            htmlFor="city"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Oras
+          </label>
+          <input
+            //onChange={(e) => setCity(e.target.value)}
+            type="text"
+            id="city"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Orasul d-voastra"
+            required
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="address"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Adresa
+          </label>
+          <input
+            //onChange={(e) => setConfirmPassword(e.target.value)}
+            type="text"
+            id="address"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Adresa d-voastra"
+            required
+          />
+        </div>
+
+        <div className="col-span-2">
+          <label
+            htmlFor="role"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Rol
+          </label>
+          <select
+            id="role"
+            value={role}
+            //onChange={(e) => setRole(e.target.value)}
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="beneficiar">Beneficiar</option>
+            <option value="voluntar">Voluntar</option>
+          </select>
+        </div>
       </div>
 
       <button

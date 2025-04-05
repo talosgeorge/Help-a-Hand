@@ -12,13 +12,13 @@ export default function App() {
     <Routes>
       {/* Ruta publică */}
       <Route path="/" element={<LandingPage />} />
-      
+
       {/* Ruta pentru înregistrare */}
       <Route
         path="/register"
         element={
           <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-            <div className="bg-white p-6 rounded shadow-md w-96">
+            <div className="bg-white p-6 rounded shadow-md w-120">
               <h1 className="text-2xl font-bold mb-4">Înregistrare</h1>
               <Register />
             </div>

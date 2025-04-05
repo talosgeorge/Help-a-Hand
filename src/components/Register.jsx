@@ -5,70 +5,119 @@ import { auth, db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [role, setRole] = useState("beneficiar");
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("beneficiar");
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-    const handleGoBack = (e) => {
-        e.preventDefault();
-        navigate(-1);
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
     }
 
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
 
-            // Salvăm și în Firestore profilul complet
-            await setDoc(doc(db, "users", user.uid), {
-                email: email,
-                role: role,
-                createdAt: new Date()
-            });
+      // Salvăm și în Firestore profilul complet
+      await setDoc(doc(db, "users", user.uid), {
+        email: email,
+        role: role,
+        createdAt: new Date(),
+      });
 
-            alert("Cont creat cu succes!");
-        } catch (error) {
-            alert("Eroare: " + error.message);
-        }
-    };
+      alert("Cont creat cu succes!");
+    } catch (error) {
+      alert("Eroare: " + error.message);
+    }
+  };
 
-    return (
-        <form onSubmit={handleRegister} className="space-y-4">
-            <input
-                type="email"
-                placeholder="Email"
-                className="border p-2 w-full"
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-                type="password"
-                placeholder="Parolă"
-                className="border p-2 w-full"
-                onChange={(e) => setPassword(e.target.value)}
-            />
+  return (
+    <form onSubmit={handleRegister} className="space-y-5">
+      {error && <div className="text-red-500">{error}</div>}
 
-            <select
-                className="border p-2 w-full"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-            >
-                <option value="beneficiar">Beneficiar</option>
-                <option value="voluntar">Voluntar</option>
-            </select>
+      <div>
+        <label
+          htmlFor="username"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Nume Utilizator
+        </label>
+        <input
+          //onChange={(e) => setUsername(e.target.value)}
+          type="text"
+          id="username"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Nume Utilizator"
+          required
+        />
+      </div>
 
-            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Creează cont
-            </button>
+      <div>
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Email
+        </label>
+        <input
+          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          id="email"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Your Email"
+          required
+        />
+      </div>
 
-            <button
-                onClick={handleGoBack}
-                className="mt-4 text-red-500 hover:text-red-700 float-right px-4 py-2 rounded"
-            >
-                Go Back
-            </button>
+      <div>
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Password
+        </label>
+        <input
+          onChange={(e) => setPassword(e.target.value)}
+          type="password"
+          id="password"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="••••••••"
+          required
+        />
+      </div>
 
-        </form>
-    );
+      <div>
+        <label
+          htmlFor="confirmPassword"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Confirm Password
+        </label>
+        <input
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          type="password"
+          id="confirmPassword"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="w-full py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition"
+      >
+        Register
+      </button>
+    </form>
+  );
 }

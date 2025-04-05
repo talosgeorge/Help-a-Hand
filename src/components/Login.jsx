@@ -55,7 +55,7 @@ export default function Login() {
           htmlFor="username"
           className="block text-sm font-medium text-gray-700"
         >
-          Username
+          Email
         </label>
         <input
           onChange={(e) => setEmail(e.target.value)}
@@ -86,7 +86,7 @@ export default function Login() {
 
       <button
         type="submit"
-        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
+        className="w-full py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition"
       >
         Sign In
       </button>

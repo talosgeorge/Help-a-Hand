@@ -35,7 +35,7 @@ export default function Voluntar() {
         <div className="min-h-screen bg-[#f9fafb]">
             <NavBar role="voluntar" />
 
-            <main className="pt-20 px-6 flex flex-col items-center">
+            <main className="pt-28 px-6 flex flex-col items-center">
                 <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-2xl text-center">
                     <h1 className="text-3xl font-bold text-green-700 mb-2">
                         Salut, {name}! <span className="animate-bounce inline-block">🤝</span>
@@ -43,13 +43,17 @@ export default function Voluntar() {
                     <p className="text-gray-600 mb-6">Gata să faci o diferență azi?</p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <Link to="/voluntar/requests" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
+                        <Link to="/voluntar/requests" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px] text-center">
                             📋 Cereri disponibile
                         </Link>
 
-                        <button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
+                        <Link
+                            to="/voluntar/cereriacceptate"
+                            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px] text-center"
+                        >
                             ✅ Cererile mele acceptate
-                        </button>
+                        </Link>
+
 
                         <button className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px]">
                             📍 Voluntariat în zona ta
@@ -61,8 +65,8 @@ export default function Voluntar() {
                     </div>
                 </div>
 
-                {/* Grid info */}
-                <div className="mt-8 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* GRID INFO */}
+                <div className="mt-10 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
                         <p className="text-lg font-medium text-gray-800">🧾 Ultima cerere acceptată</p>
                         <p className="text-sm text-gray-500 mt-2">„Farmacie pentru vecina Maria”</p>

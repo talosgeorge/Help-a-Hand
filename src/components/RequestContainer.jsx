@@ -1,4 +1,4 @@
-export default function RequestContainer({ request, onDelete, onAdd }) {
+export default function RequestContainer({ request, onDelete, onAccept }) {
   const formatDate = (timestamp) => {
     if (!timestamp || !timestamp.seconds) return "N/A";
     const date = new Date(timestamp.seconds * 1000);
@@ -19,7 +19,7 @@ export default function RequestContainer({ request, onDelete, onAdd }) {
       badge: "bg-gray-600 text-white",
     },
     Default: {
-      image: null, // 🟢 fără imagine
+      image: null,
       badge: "bg-gray-400 text-white",
     },
   };
@@ -29,43 +29,62 @@ export default function RequestContainer({ request, onDelete, onAdd }) {
   const hasBackgroundImage = styles.image !== null;
 
   return (
-    <div
-      className={`relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${!hasBackgroundImage ? "bg-white border border-gray-200" : ""}`}
-      style={hasBackgroundImage ? { backgroundImage: `url(${styles.image})`, backgroundSize: "cover", backgroundPosition: "center" } : {}}
-    >
-      {/* Overlay doar dacă are imagine */}
-      {hasBackgroundImage && <div className="absolute inset-0 bg-black bg-opacity-50" />}
+      <div
+          className={`relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${
+              !hasBackgroundImage ? "bg-white border border-gray-200" : ""
+          }`}
+          style={
+            hasBackgroundImage
+                ? {
+                  backgroundImage: `url(${styles.image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }
+                : {}
+          }
+      >
+        {hasBackgroundImage && <div className="absolute inset-0 bg-black bg-opacity-50" />}
 
-      <div className={`relative z-10 p-5 ${hasBackgroundImage ? "text-white" : "text-gray-800"}`}>
-        <div className="grid gap-1 text-sm">
-          <p><span className="font-semibold">Categorie:</span> {request.category}</p>
-          <p><span className="font-semibold">Descriere:</span> {request.description}</p>
-          <p><span className="font-semibold">Adresă:</span> {request.address}</p>
-          <p><span className="font-semibold">Telefon:</span> {request.phone || "-"}</p>
-          <p><span className="font-semibold">Ora:</span> {request.time}</p>
-          <p><span className="font-semibold">Data:</span> {formatDate(request.createdAt)}</p>
+        <div className={`relative z-10 p-5 ${hasBackgroundImage ? "text-white" : "text-gray-800"}`}>
+          <div className="grid gap-1 text-sm">
+            <p>
+              <span className="font-semibold">Categorie:</span> {request.category}
+            </p>
+            <p>
+              <span className="font-semibold">Descriere:</span> {request.description}
+            </p>
+            <p>
+              <span className="font-semibold">Adresă:</span> {request.address}
+            </p>
+            <p>
+              <span className="font-semibold">Telefon:</span> {request.phone || "-"}
+            </p>
+            <p>
+              <span className="font-semibold">Ora:</span> {request.time}
+            </p>
+            <p>
+              <span className="font-semibold">Data:</span> {formatDate(request.createdAt)}
+            </p>
+          </div>
+
+          {onDelete && (
+              <button
+                  onClick={() => onDelete(request.id)}
+                  className="absolute top-2 right-2 text-red-600 text-2xl cursor-pointer hover:text-red-800"
+              >
+                &times;
+              </button>
+          )}
+
+          {onAccept && (
+              <button
+                  onClick={() => onAccept(request.id)}
+                  className="mt-4 bg-green-600 hover:bg-green-700 text-white font-semibold text-sm px-4 py-2 rounded-md transition"
+              >
+                Acceptă cererea
+              </button>
+          )}
         </div>
-
-        {/* Display delete button for beneficiar */}
-        {onDelete && (
-          <button
-            onClick={() => onDelete(request.id)}
-            className="absolute top-2 right-2 text-red-600 text-2xl cursor-pointer hover:text-red-800"
-          >
-            &times; {/* Red delete button */}
-          </button>
-        )}
-
-        {/* Display add button for voluntar */}
-        {onAdd && (
-          <button
-            onClick={() => onAdd(request.id)}
-            className="absolute top-2 right-2 bg-green-500 text-white text-sm font-semibold px-3 py-1 rounded-full hover:bg-green-600"
-          >
-            + {/* Green add button */}
-          </button>
-        )}
       </div>
-    </div>
   );
 }

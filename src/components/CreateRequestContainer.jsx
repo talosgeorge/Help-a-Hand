@@ -72,8 +72,10 @@ export default function CreateRequestContainer({ onClose }) {
         email: user.email,
         createdAt: new Date(),
         priority,
-        package: userPackage
+        package: userPackage,
+        status: "pending" // ✅ nou status adăugat
       });
+
 
       setShowSuccess(true);
 

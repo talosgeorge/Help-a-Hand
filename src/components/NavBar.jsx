@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-export default function NavBar({ role }) {
+export default function NavBar({ role , onOpenCreateRequest }) {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
@@ -38,6 +38,9 @@ export default function NavBar({ role }) {
                                 <Link to="/beneficiar/requests" className="hover:text-green-500">
                                     Requests
                                 </Link>
+                                <button onClick={onOpenCreateRequest} className="hover:text-green-500">
+                                CreateRequest
+                                </button>
                             </li>
                         )}
                         {role === "voluntar" && (

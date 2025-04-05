@@ -34,6 +34,6 @@ export default function App() {
       />
       <Route path="/beneficiar" element={<Beneficiar />} />
       <Route path="/voluntar" element={<Voluntar />} />
-    </Routes>
+      </Routes>
   );
 }

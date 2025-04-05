@@ -7,9 +7,9 @@ import { signOut as firebaseSignOut } from "firebase/auth";
 export default function NavBar({ role, onOpenCreateRequest }) {
     const [userData, setUserData] = useState(null);
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-    const [image, setImage] = useState(null);  // State for image
+    const [image, setImage] = useState(null);
     const navigate = useNavigate();
-    const [dropdownTimeout, setDropdownTimeout] = useState(null);  // Timer state for the delay
+    const [dropdownTimeout, setDropdownTimeout] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -91,19 +91,19 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                         {role === "beneficiar" && (
                             <li className="flex items-center">
                                 <Link to="/beneficiar/requests" className="hover:text-green-500 text-lg pr-5">
-                                    Requests
+                                    Vezi propriile tale cereri
                                 </Link>
                                 <button onClick={onOpenCreateRequest} className="hover:text-green-500">
-                                    CreateRequest
+                                    Creează cerere
                                 </button>
                             </li>
                         )}
-                       {role === "voluntar" && (
-                        <li className="flex items-center">
-                        <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
-                            Requests
-                        </Link>
-                         </li>
+                        {role === "voluntar" && (
+                            <li className="flex items-center">
+                                <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
+                                    Vezi cererile disponibile
+                                </Link>
+                            </li>
                         )}
                         <li
                             className="relative flex items-center space-x-2"
@@ -123,9 +123,9 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                         />
                                     ) : (
                                         userData && (
-                                        <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold group-hover:bg-green-600 transition-colors duration-300">
-                                            {getInitials(userData.email)}
-                                        </div>
+                                            <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold group-hover:bg-green-600 transition-colors duration-300">
+                                                {getInitials(userData.email)}
+                                            </div>
                                         )
                                     )}
                                 </button>

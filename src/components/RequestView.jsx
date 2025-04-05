@@ -8,8 +8,8 @@ export default function OwnRequestView() {
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState("");  // New state for category filter
-  const [city, setCity] = useState("");  // New state for city filter
+  const [category, setCategory] = useState("");
+  const [city, setCity] = useState("");
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -29,7 +29,6 @@ export default function OwnRequestView() {
     fetchRequests();
   }, []);
 
-  // Handle changes in category and city
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
   };
@@ -38,10 +37,8 @@ export default function OwnRequestView() {
     setCity(e.target.value);
   };
 
-  // Filter the requests based on category and city
   useEffect(() => {
     const filtered = requests.filter(req => {
-      // Check if category and city are defined and use toLowerCase
       const matchesCategory = category ? req.category && req.category.toLowerCase().includes(category.toLowerCase()) : true;
       const matchesCity = city ? req.address && req.address.toLowerCase().includes(city.toLowerCase()) : true;
       return matchesCategory && matchesCity;
@@ -55,7 +52,6 @@ export default function OwnRequestView() {
     <div className="flex flex-col lg:flex-row gap-6 p-6">
       <NavBar />
 
-      {/* Sidebar filter */}
       <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Filter by category and city</h2>
 
@@ -84,7 +80,6 @@ export default function OwnRequestView() {
         </div>
       </aside>
 
-      {/* Grid of requests */}
       <section className="flex-1 mt-24">
         {filteredRequests.length === 0 ? (
           <p className="text-gray-600">No requests found matching the filters.</p>

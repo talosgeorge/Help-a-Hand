@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 export default function Beneficiar() {
     const [showCreateRequest, setShowCreateRequest] = useState(false);
     const [name, setName] = useState('');
+    const [selectedPackage, setSelectedPackage] = useState(null);
 
     useEffect(() => {
         const fetchUserName = async () => {
@@ -38,8 +39,33 @@ export default function Beneficiar() {
         fetchUserName();
     }, []);
 
-    const handleOpenCreateRequest = () => setShowCreateRequest(true);
-    const handleCloseCreateRequest = () => setShowCreateRequest(false);
+    const handleOpenCreateRequest = () => {
+        setShowCreateRequest(true);
+    };
+
+    const handleCloseCreateRequest = () => {
+        setShowCreateRequest(false);
+    };
+
+    const updateUserPackage = async (pkg) => {
+        const user = auth.currentUser;
+        if (user) {
+            const userRef = doc(db, "users", user.uid);
+            try {
+                await updateDoc(userRef, {
+                    package: pkg,
+                });
+                console.log("Pachet salvat:", pkg);
+            } catch (error) {
+                console.error("Eroare la salvare:", error);
+            }
+        }
+    };
+
+    const handlePackageSelect = (pkg) => {
+        setSelectedPackage(pkg);
+        updateUserPackage(pkg);
+    };
 
     return (
         <div className="min-h-screen bg-[#f9fafb]">
@@ -143,7 +169,9 @@ export default function Beneficiar() {
                         >
                             &times;
                         </button>
-                        <CreateRequestContainer onClose={handleCloseCreateRequest}/>
+                        <CreateRequestContainer
+                            onClose={handleCloseCreateRequest}
+                        />
                     </div>
                 </div>
             )}

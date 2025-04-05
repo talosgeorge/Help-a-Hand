@@ -5,6 +5,7 @@ import Register from "./components/Register";
 import Beneficiar from "./components/Beneficiar";
 import Voluntar from "./components/Voluntar";
 import RequestView from "./components/RequestView";
+import OwnRequestView from "./components/OwnRequestView";
 import "./index.css";
 
 export default function App() {
@@ -55,9 +56,10 @@ export default function App() {
                     </div>
                 }
             />
-
             <Route path="/beneficiar" element={<Beneficiar />} />
             <Route path="/voluntar" element={<Voluntar />} />
+            <Route path="/voluntar/requests" element={<RequestView />} />
+            <Route path="/beneficiar/requests" element={<OwnRequestView />} />
         </Routes>
     );
 }

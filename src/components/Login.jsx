@@ -62,7 +62,7 @@ export default function Login() {
           type="text"
           id="username"
           className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Your Username"
+          placeholder="Email"
           required
         />
       </div>
@@ -72,14 +72,14 @@ export default function Login() {
           htmlFor="password"
           className="block text-sm font-medium text-gray-700"
         >
-          Password
+          Parola
         </label>
         <input
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           id="password"
           className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="••••••••"
+          placeholder="Parola"
           required
         />
       </div>

@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import Beneficiar from './components/Beneficiar';
@@ -9,9 +9,25 @@ export default function App() {
         <Routes>
             <Route
                 path="/"
-                element={<div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                    <h1 className="text-2xl font-bold">Bine ai venit!</h1>
-                </div>}
+                element={
+                    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center space-y-6">
+                        <h1 className="text-2xl font-bold">Bine ai venit!</h1>
+                        <div className="flex space-x-4">
+                            <Link
+                                to="/login"
+                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                            >
+                                Login
+                            </Link>
+                            <Link
+                                to="/register"
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            >
+                                Register
+                            </Link>
+                        </div>
+                    </div>
+                }
             />
             <Route
                 path="/register"

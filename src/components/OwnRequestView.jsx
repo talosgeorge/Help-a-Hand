@@ -8,11 +8,10 @@ export default function OwnRequestView() {
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState("");
-  const [city, setCity] = useState("");
-  const [userRole, setUserRole] = useState("");
+  const [category, setCategory] = useState(""); // New state for category filter
+  const [city, setCity] = useState(""); // New state for city filter
+  const [userRole, setUserRole] = useState(""); // State for storing user role
 
-  // Obține rolul utilizatorului curent
   useEffect(() => {
     const fetchUserRole = async () => {
       const user = auth.currentUser;
@@ -22,7 +21,7 @@ export default function OwnRequestView() {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const data = docSnap.data();
-            setUserRole(data.role); // Setează rolul utilizatorului
+            setUserRole(data.role); // Presupunem că rolul este salvat în documentul utilizatorului
           }
         } catch (error) {
           console.error("Error fetching user role:", error);
@@ -33,7 +32,6 @@ export default function OwnRequestView() {
     fetchUserRole();
   }, []);
 
-  // Obține toate cererile
   useEffect(() => {
     const fetchRequests = async () => {
       try {
@@ -52,30 +50,35 @@ export default function OwnRequestView() {
     fetchRequests();
   }, []);
 
-  // Filtrare după categorie și oraș
+  // Handle changes in category and city
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+  };
+
+  const handleCityChange = (e) => {
+    setCity(e.target.value);
+  };
+
+  // Filter the requests based on category and city
   useEffect(() => {
     const filtered = requests.filter((req) => {
-      const matchesCategory = category ? req.category?.toLowerCase().includes(category.toLowerCase()) : true;
-      const matchesCity = city ? req.address?.toLowerCase().includes(city.toLowerCase()) : true;
+      const matchesCategory =
+        category ? req.category && req.category.toLowerCase().includes(category.toLowerCase()) : true;
+      const matchesCity = city ? req.address && req.address.toLowerCase().includes(city.toLowerCase()) : true;
       return matchesCategory && matchesCity;
     });
     setFilteredRequests(filtered);
   }, [category, city, requests]);
 
-  // Șterge o cerere (beneficiar)
+  // Handle deleting a request
   const handleDeleteRequest = async (requestId) => {
     try {
-      await deleteDoc(doc(db, "requests", requestId));
-      setRequests((prev) => prev.filter((req) => req.id !== requestId));
-      setFilteredRequests((prev) => prev.filter((req) => req.id !== requestId));
+      await deleteDoc(doc(db, "requests", requestId)); // Delete the request from Firestore
+      setRequests((prevRequests) => prevRequests.filter((req) => req.id !== requestId)); // Update local state
+      setFilteredRequests((prevRequests) => prevRequests.filter((req) => req.id !== requestId)); // Update filtered requests
     } catch (error) {
       console.error("Error deleting request:", error);
     }
-  };
-
-  // Adaugă o cerere (voluntar)
-  const handleAddRequest = (requestId) => {
-    console.log("merge", requestId); // Afișează în consolă
   };
 
   if (loading) return <p className="p-6">Loading requests...</p>;
@@ -84,7 +87,7 @@ export default function OwnRequestView() {
     <div className="flex flex-col lg:flex-row gap-6 p-6">
       <NavBar />
 
-      {/* Sidebar cu filtre */}
+      {/* Sidebar filter */}
       <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Filter by category and city</h2>
 
@@ -94,7 +97,7 @@ export default function OwnRequestView() {
             type="text"
             id="category"
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={handleCategoryChange}
             placeholder="Enter category"
             className="border border-gray-300 p-2 rounded-lg"
           />
@@ -106,14 +109,14 @@ export default function OwnRequestView() {
             type="text"
             id="city"
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={handleCityChange}
             placeholder="Enter city"
             className="border border-gray-300 p-2 rounded-lg"
           />
         </div>
       </aside>
 
-      {/* Lista cu cereri */}
+      {/* Grid of requests */}
       <section className="flex-1 mt-24">
         {filteredRequests.length === 0 ? (
           <p className="text-gray-600">No requests found matching the filters.</p>
@@ -123,8 +126,7 @@ export default function OwnRequestView() {
               <RequestContainer
                 key={req.id}
                 request={req}
-                onDelete={userRole === "beneficiar" ? handleDeleteRequest : undefined}
-                onAdd={userRole === "voluntar" ? handleAddRequest : undefined} // Afișează butonul doar dacă este voluntar
+                onDelete={userRole === "beneficiar" ? handleDeleteRequest : null} // Only show delete button for "beneficiar"
               />
             ))}
           </div>

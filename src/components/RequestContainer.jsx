@@ -9,13 +9,15 @@ export default function RequestContainer({ request, onDelete }) {
 
   return (
     <div className="relative border rounded-2xl shadow-md bg-white p-5 hover:shadow-lg transition-all duration-300">
-      {/* Butonul "x" pentru ștergere */}
-      <button
-        onClick={() => onDelete(request.id)} // Apelăm funcția de ștergere
-        className="absolute top-2 right-2 text-red-600 text-2xl cursor-pointer hover:text-red-800"
-      >
-        &times;
-      </button>
+      {/* Afișăm butonul de ștergere doar dacă există funcția onDelete */}
+      {onDelete && (
+        <button
+          onClick={() => onDelete(request.id)} // Apelăm funcția de ștergere
+          className="absolute top-2 right-2 text-red-600 text-2xl cursor-pointer hover:text-red-800"
+        >
+          &times;
+        </button>
+      )}
 
       <div className="grid gap-1 text-sm text-gray-700">
         <p><span className="font-semibold">Categorie:</span> {request.category}</p>

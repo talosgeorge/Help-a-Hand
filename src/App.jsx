@@ -3,6 +3,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Beneficiar from './components/Beneficiar';
 import Voluntar from './components/Voluntar';
+import "./index.css";
 
 export default function App() {
     return (

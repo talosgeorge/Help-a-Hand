@@ -30,6 +30,7 @@ export default function Login() {
                 }
                 else if (role === "voluntar") {
                     alert("Redirecting to Volunteer page...");
+                    navigate("/voluntar");
                 } else {
                     alert("Unknown role.");
                 }

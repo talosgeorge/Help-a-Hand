@@ -14,17 +14,16 @@ export default function Register() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Save user profile (email, role) in Firestore
+            // Salvăm și în Firestore profilul complet
             await setDoc(doc(db, "users", user.uid), {
                 email: email,
                 role: role,
                 createdAt: new Date()
             });
 
-            alert("Account created successfully!");
-
+            alert("Cont creat cu succes!");
         } catch (error) {
-            alert("Error: " + error.message);
+            alert("Eroare: " + error.message);
         }
     };
 
@@ -38,7 +37,7 @@ export default function Register() {
             />
             <input
                 type="password"
-                placeholder="Password"
+                placeholder="Parolă"
                 className="border p-2 w-full"
                 onChange={(e) => setPassword(e.target.value)}
             />
@@ -53,7 +52,7 @@ export default function Register() {
             </select>
 
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-                Create Account
+                Creează cont
             </button>
         </form>
     );

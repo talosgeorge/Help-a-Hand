@@ -4,11 +4,12 @@ import { db } from "../firebase";
 import RequestContainer from "./RequestContainer";
 import NavBar from "./NavBar";
 
-export default function RequestView() {
+export default function OwnRequestView() {
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("Toate");
+  const [category, setCategory] = useState("");
+  const [city, setCity] = useState("");
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -22,53 +23,66 @@ export default function RequestView() {
         setFilteredRequests(data);
         setLoading(false);
       } catch (error) {
-        console.error("Eroare la încărcarea cererilor:", error);
+        console.error("Error loading requests:", error);
       }
     };
     fetchRequests();
   }, []);
 
-  const handleCategoryFilter = (category) => {
-    setSelectedCategory(category);
-    if (category === "Toate") {
-      setFilteredRequests(requests);
-    } else {
-      const filtered = requests.filter(req => req.category === category);
-      setFilteredRequests(filtered);
-    }
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
   };
 
-  const categories = ["Toate", ...new Set(requests.map(req => req.category))];
+  const handleCityChange = (e) => {
+    setCity(e.target.value);
+  };
 
-  if (loading) return <p className="p-6">Se încarcă cererile...</p>;
+  useEffect(() => {
+    const filtered = requests.filter(req => {
+      const matchesCategory = category ? req.category && req.category.toLowerCase().includes(category.toLowerCase()) : true;
+      const matchesCity = city ? req.address && req.address.toLowerCase().includes(city.toLowerCase()) : true;
+      return matchesCategory && matchesCity;
+    });
+    setFilteredRequests(filtered);
+  }, [category, city, requests]);
+
+  if (loading) return <p className="p-6">Loading requests...</p>;
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-6">
-        <NavBar />
-      {/* Sidebar filtrare */}
+      <NavBar />
+
       <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Filtrare după categorie</h2>
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Filter by category and city</h2>
+
         <div className="flex flex-col gap-2">
-          {categories.map((cat, index) => (
-            <button
-              key={index}
-              onClick={() => handleCategoryFilter(cat)}
-              className={`text-left px-3 py-2 rounded-lg font-medium ${
-                selectedCategory === cat
-                  ? "bg-green-500 text-white"
-                  : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+          <label htmlFor="category" className="font-medium">Category</label>
+          <input
+            type="text"
+            id="category"
+            value={category}
+            onChange={handleCategoryChange}
+            placeholder="Enter category"
+            className="border border-gray-300 p-2 rounded-lg"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2 mt-4">
+          <label htmlFor="city" className="font-medium">City</label>
+          <input
+            type="text"
+            id="city"
+            value={city}
+            onChange={handleCityChange}
+            placeholder="Enter city"
+            className="border border-gray-300 p-2 rounded-lg"
+          />
         </div>
       </aside>
 
-      {/* Grid requesturi */}
       <section className="flex-1 mt-24">
         {filteredRequests.length === 0 ? (
-          <p className="text-gray-600">Nicio cerere găsită pentru categoria selectată.</p>
+          <p className="text-gray-600">No requests found matching the filters.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {filteredRequests.map((req) => (

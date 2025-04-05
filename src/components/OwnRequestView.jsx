@@ -96,11 +96,12 @@ export default function OwnRequestView() {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
                         {filteredRequests.map((req) => (
-                            <div key={req.id} className="relative">
+                            <div key={req.id} className="relative flex flex-col h-full">
                                 <RequestContainer request={req} />
+                                <div className="flex-grow" /> {/* This ensures the space grows and button goes to bottom */}
                                 <button
                                     onClick={() => deleteRequest(req.id)}
-                                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-700 transition"
+                                    className="mt-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-700 transition"
                                 >
                                     Șterge
                                 </button>

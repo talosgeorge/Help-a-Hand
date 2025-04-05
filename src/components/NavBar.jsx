@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-export default function NavBar() {
+export default function NavBar({ role }) {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
@@ -28,13 +28,20 @@ export default function NavBar() {
         <header>
             <nav className="nav-bar">
                 <div className="logo">
-                    <h2>Help-A-Hand</h2>
+                    <Link to="/">Help-a-Hand</Link>
                 </div>
                 <div className="menu-items">
                     <ul>
-                        <li>
-                            <Link to="/voluntar/requests">Requests</Link>
-                        </li>
+                        {role === "beneficiar" ? (
+                            <li>
+                                <Link to="/beneficiar/requests">Requests</Link>
+                            </li>
+                        ) : null}
+                        {role === "voluntar" ? (
+                            <li>
+                                <Link to="/voluntar/requests">Requests</Link>
+                            </li>
+                        ) : null}
                         <li className="dropdown">
                             Contul Meu
                             {userData && (

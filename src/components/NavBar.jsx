@@ -106,15 +106,9 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                 </div>
 
                 <div className="flex items-center space-x-6 text-lg text-gray-700">
-                    {role === "voluntar" && (
-                        <Link to="/voluntar/requests" className="hover:text-green-500 text-lg">
-                            Vezi cererile disponibile
-                        </Link>
-                    )}
-
                     {shouldShowGoBackButton && (
                         <button
-                            onClick={() => navigate(-1)} 
+                            onClick={() => navigate(-1)}
                             className="bg-red-500 text-white py-1 px-4 rounded-lg hover:bg-red-600 transition"
                         >
                             Go Back

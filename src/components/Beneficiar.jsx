@@ -58,30 +58,51 @@ export default function Beneficiar() {
                     <h1 className="text-3xl font-bold text-green-700 mb-2">Salut, {name}!</h1>
                     <p className="text-gray-600 mb-6">Cu ce te putem ajuta azi?</p>
 
-                    <div className="flex flex-col sm:flex-row justify-center gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <button
                             onClick={handleOpenCreateRequest}
-                            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto"
+                            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg transition"
                         >
                             🖐 Cere Ajutor
                         </button>
 
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto">
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg transition">
                             📋 Cererile Mele
+                        </button>
+
+                        <button className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-3 rounded-lg transition">
+                            🧑‍🤝‍🧑 Voluntari Aproape
+                        </button>
+
+                        <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg transition">
+                            📜 Istoric Cereri
                         </button>
                     </div>
                 </div>
 
-                {/* Secțiune de idei / statusuri */}
-                <div className="mt-10 w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="bg-white p-6 rounded-xl shadow text-center">
-                        <p className="text-gray-700 font-medium">📦 Ultima cerere: „Colet din Poștă”</p>
-                        <p className="text-sm text-gray-400 mt-2">Status: Așteaptă voluntar</p>
+                {/* GRID de info și idei */}
+                <div className="mt-10 w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+                        <p className="text-lg font-medium text-gray-800">📦 Ultima cerere</p>
+                        <p className="text-sm text-gray-500 mt-2">„Colet din Poștă”</p>
+                        <p className="text-sm text-gray-400">Status: Așteaptă voluntar</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-xl shadow text-center">
-                        <p className="text-gray-700 font-medium">👥 Voluntari disponibili în zonă</p>
-                        <p className="text-sm text-gray-400 mt-2">Vezi cine este aproape de tine</p>
+                    <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+                        <p className="text-lg font-medium text-gray-800">👥 Voluntari disponibili</p>
+                        <p className="text-sm text-gray-500 mt-2">3 voluntari în zona ta</p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+                        <p className="text-lg font-medium text-gray-800">❤️ Voluntari preferați</p>
+                        <p className="text-sm text-gray-500 mt-2">Niciunul salvat momentan</p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow text-center hover:shadow-lg transition">
+                        <p className="text-lg font-medium text-gray-800">ℹ️ Ai nevoie de ajutor?</p>
+                        <p className="text-sm text-gray-500 mt-2">
+                            Suntem aici pentru orice întrebare sau nevoie zilnică. Cere ajutor cu încredere!
+                        </p>
                     </div>
                 </div>
             </main>
@@ -102,5 +123,6 @@ export default function Beneficiar() {
             )}
         </div>
     );
+
 
 }

@@ -22,18 +22,18 @@ export default function Beneficiar() {
     const handleCloseCreateRequest = () => {
         setShowCreateRequest(false);
     };
+
     console.log(import.meta.env.VITE_GOOGLE_MAPS_API_KEY);
 
     return (
         <div>
-            {/* Pasăm funcția către NavBar */}
             <NavBar role="beneficiar" onOpenCreateRequest={handleOpenCreateRequest} />
 
             <div className="min-h-screen bg-gray-100 flex items-center justify-center pt-20">
                 <div className="bg-white p-6 rounded shadow-md w-96">
                     <h1 className="text-2xl font-bold mb-4">Beneficiar</h1>
                     <p>Pagina destinată beneficiarilor.</p>
-                    <p className="mt-4 text-sm text-gray-500">Autentificat ca: {auth.currentUser.email}</p>
+                    <p className="mt-4 text-sm text-gray-500">Autentificat ca:</p>
                 </div>
             </div>
 
@@ -47,10 +47,11 @@ export default function Beneficiar() {
                         >
                             &times;
                         </button>
-                        <CreateRequestContainer />
+                        <CreateRequestContainer onClose={handleCloseCreateRequest} />
                     </div>
                 </div>
             )}
+
         </div>
     );
 }

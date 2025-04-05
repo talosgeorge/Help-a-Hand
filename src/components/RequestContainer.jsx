@@ -1,4 +1,4 @@
-export default function RequestContainer({ request }) {
+export default function RequestContainer({ request, onDelete, onAdd }) {
   const formatDate = (timestamp) => {
     if (!timestamp || !timestamp.seconds) return "N/A";
     const date = new Date(timestamp.seconds * 1000);
@@ -30,18 +30,8 @@ export default function RequestContainer({ request }) {
 
   return (
     <div
-      className={`relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${
-        !hasBackgroundImage ? "bg-white border border-gray-200" : ""
-      }`}
-      style={
-        hasBackgroundImage
-          ? {
-              backgroundImage: `url(${styles.image})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }
-          : {}
-      }
+      className={`relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 ${!hasBackgroundImage ? "bg-white border border-gray-200" : ""}`}
+      style={hasBackgroundImage ? { backgroundImage: `url(${styles.image})`, backgroundSize: "cover", backgroundPosition: "center" } : {}}
     >
       {/* Overlay doar dacă are imagine */}
       {hasBackgroundImage && <div className="absolute inset-0 bg-black bg-opacity-50" />}
@@ -55,6 +45,26 @@ export default function RequestContainer({ request }) {
           <p><span className="font-semibold">Ora:</span> {request.time}</p>
           <p><span className="font-semibold">Data:</span> {formatDate(request.createdAt)}</p>
         </div>
+
+        {/* Display delete button for beneficiar */}
+        {onDelete && (
+          <button
+            onClick={() => onDelete(request.id)}
+            className="absolute top-2 right-2 text-red-600 text-2xl cursor-pointer hover:text-red-800"
+          >
+            &times; {/* Red delete button */}
+          </button>
+        )}
+
+        {/* Display add button for voluntar */}
+        {onAdd && (
+          <button
+            onClick={() => onAdd(request.id)}
+            className="absolute top-2 right-2 bg-green-500 text-white text-sm font-semibold px-3 py-1 rounded-full hover:bg-green-600"
+          >
+            + {/* Green add button */}
+          </button>
+        )}
       </div>
     </div>
   );

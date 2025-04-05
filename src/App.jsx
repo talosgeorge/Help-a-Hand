@@ -1,16 +1,14 @@
-import Register from "./components/Register"; // dacă ai creat deja componenta
-import Login from "./components/Login"; // dacă ai creat deja componenta
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
+import LoginPage from "./components/LoginPage";
 
 export default function App() {
-    return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-            <div className="bg-white p-6 rounded shadow-md w-96">
-                <h1 className="text-2xl font-bold mb-4">Înregistrare</h1>
-                <Register />
-                <h1 className="text-2xl font-bold mb-4 mt-6">Login</h1>
-                <Login />
-            </div>
-        </div>
-    );
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </Router>
+  );
 }
-

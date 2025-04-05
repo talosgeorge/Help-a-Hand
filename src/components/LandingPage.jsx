@@ -61,7 +61,7 @@ export default function LandingPage() {
           </p>
           <Link
             to="/register"
-            className="inline-block px-10 py-5 bg-[#70d299] text-white text-xl font-semibold rounded-lg hover:bg-green-600 transition"
+            className="inline-block px-10 py-5 bg-[#70d299] text-white text-xl font-semibold rounded-lg hover:bg-[#429b7f] transition"
           >
             Începe acum
           </Link>

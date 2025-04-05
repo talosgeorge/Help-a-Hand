@@ -58,9 +58,12 @@ export default function Voluntar() {
                     <button className="bg-purple-500 hover:bg-purple-600 text-white font-semibold px-6 py-4 rounded-lg transition">
                         📍 Voluntariat în zona ta
                     </button>
-                    <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-4 rounded-lg transition">
+                    <Link
+                        to="/voluntar/istoric"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg transition w-full sm:w-auto min-w-[150px] text-center block"
+                    >
                         🕓 Istoric ajutor
-                    </button>
+                    </Link>
                 </section>
 
                 {/* Statistici & Info */}

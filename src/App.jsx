@@ -8,6 +8,7 @@ import RequestView from "./components/RequestView";
 import OwnRequestView from "./components/OwnRequestView";
 import VoluntarAccepted from "./components/VoluntarAccepted"; // ✅ Nou
 import VoluntarHistory from "./components/VoluntarHistory";
+import BeneficiarHistory from "./components/BeneficiarHistory";
 
 import "./index.css";
 
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="/beneficiar/requests" element={<OwnRequestView />} />
             <Route path="/voluntar/cereriacceptate" element={<VoluntarAccepted />} />
             <Route path="/voluntar/istoric" element={<VoluntarHistory />} />
+            <Route path="/beneficiar/istoric" element={<BeneficiarHistory />} />
         </Routes>
     );
 }

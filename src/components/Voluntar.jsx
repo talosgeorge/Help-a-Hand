@@ -5,8 +5,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { Link } from "react-router-dom";
 
 export default function Voluntar() {
-    const [name, setName] = useState('');
-    const [completedRequests, setCompletedRequests] = useState(0);
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -17,17 +16,14 @@ export default function Voluntar() {
 
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        setName(data.name.charAt(0).toUpperCase() + data.name.slice(1) || 'Fără nume');
-                        setCompletedRequests(data.completedRequests || 0);
-                    } else {
-                        setName('Fără document');
+                        setUserData({
+                            ...data,
+                            email: user.email,
+                        });
                     }
                 } catch (err) {
                     console.error('Eroare la citirea datelor:', err);
-                    setName('Eroare');
                 }
-            } else {
-                setName('Neautentificat');
             }
         });
 
@@ -36,13 +32,13 @@ export default function Voluntar() {
 
     return (
         <div className="min-h-screen bg-[#f9fafb]">
-            <NavBar role="voluntar" />
+            <NavBar role="voluntar" userData={userData} setUserData={setUserData} />
 
             <main className="pt-24 pb-16 px-6 flex flex-col items-center">
                 {/* Greeting Section */}
                 <section className="bg-white p-10 rounded-xl shadow-md w-full max-w-4xl text-center mb-12">
                     <h1 className="text-4xl font-bold text-green-700 mb-3">
-                        Salut, {name}! <span className="animate-bounce inline-block">🤝</span>
+                        Salut, {userData?.name || "Voluntar"}! <span className="animate-bounce inline-block">🤝</span>
                     </h1>
                     <p className="text-gray-600 text-lg">Gata să faci o diferență azi?</p>
                 </section>
@@ -83,7 +79,7 @@ export default function Voluntar() {
 
                         <div className="bg-[#f0fdf4] p-6 rounded-xl shadow text-center hover:shadow-lg transition h-full">
                             <p className="text-lg font-medium text-gray-800">
-                                🎉 Ai ajutat {completedRequests} persoan{completedRequests === 1 ? 'ă' : 'e'}!
+                                🎉 Ai ajutat {userData?.completedCount || 0} persoan{(userData?.completedCount || 0) === 1 ? 'ă' : 'e'}!
                             </p>
                             <p className="text-sm text-gray-600 mt-2">Felicitări, contribuția ta contează!</p>
                         </div>

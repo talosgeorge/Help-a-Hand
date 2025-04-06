@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
 import {
     collection,
-    getDocs,
+    onSnapshot,
     query,
     where,
     doc,
@@ -20,17 +20,33 @@ export default function VoluntarAccepted() {
     const [showChat, setShowChat] = useState(false);
     const [activeRequestId, setActiveRequestId] = useState(null);
     const [userData, setUserData] = useState(null);
+    const [xpToast, setXpToast] = useState(""); // 🔔 Toast Message
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        let unsubscribeSnapshot;
+
+        const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 await fetchUserData(user.uid);
-                await fetchAcceptedRequests(user.uid);
+
+                const q = query(
+                    collection(db, "requests"),
+                    where("status", "==", "accepted"),
+                    where("volunteerId", "==", user.uid)
+                );
+
+                unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
+                    const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                    setAcceptedRequests(data);
+                });
             }
         });
 
-        return () => unsubscribe();
+        return () => {
+            unsubscribeAuth();
+            if (unsubscribeSnapshot) unsubscribeSnapshot();
+        };
     }, []);
 
     const fetchUserData = async (uid) => {
@@ -39,18 +55,6 @@ export default function VoluntarAccepted() {
         if (userDoc.exists()) {
             setUserData(userDoc.data());
         }
-    };
-
-    const fetchAcceptedRequests = async (uid) => {
-        const q = query(
-            collection(db, "requests"),
-            where("status", "==", "accepted"),
-            where("volunteerId", "==", uid)
-        );
-
-        const snapshot = await getDocs(q);
-        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setAcceptedRequests(data);
     };
 
     const handleComplete = async (requestId) => {
@@ -81,7 +85,10 @@ export default function VoluntarAccepted() {
                 level: newLevel
             }));
 
-            setAcceptedRequests((prev) => prev.filter((req) => req.id !== requestId));
+            // 🎉 Afișează mesaj XP Toast
+            setXpToast("✅ Cererea a fost finalizată. Ai primit 20 XP!");
+            setTimeout(() => setXpToast(""), 3000);
+
         } catch (error) {
             console.error("Eroare la finalizare cerere:", error);
         }
@@ -94,7 +101,7 @@ export default function VoluntarAccepted() {
 
     return (
         <div className="min-h-screen bg-[#f9fafb]">
-            <NavBar role="voluntar" userData={userData} />
+            <NavBar role="voluntar" userData={userData} setUserData={setUserData} />
 
             <main className="pt-28 px-6 flex flex-col items-center">
                 <div className="w-full max-w-4xl text-center mb-6">
@@ -146,6 +153,7 @@ export default function VoluntarAccepted() {
                 </div>
             </main>
 
+            {/* Chat Modal */}
             {showChat && activeRequestId && (
                 <ChatModal
                     requestId={activeRequestId}
@@ -154,6 +162,13 @@ export default function VoluntarAccepted() {
                         setActiveRequestId(null);
                     }}
                 />
+            )}
+
+            {/* ✅ Toast XP */}
+            {xpToast && (
+                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-sm font-medium px-6 py-3 rounded-xl shadow-lg animate-fade-in-out z-50">
+                    {xpToast}
+                </div>
             )}
         </div>
     );

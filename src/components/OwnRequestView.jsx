@@ -3,14 +3,15 @@ import { collection, getDocs, deleteDoc, doc, getDoc } from "firebase/firestore"
 import { db, auth } from "../firebase";
 import RequestContainer from "./RequestContainer";
 import NavBar from "./NavBar";
+import ChatModal from "./ChatModal";
 
 export default function OwnRequestView() {
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState("");
-  const [city, setCity] = useState("");
+  const [filterStatus, setFilterStatus] = useState("pending");
   const [userRole, setUserRole] = useState("");
+  const [chatRequestId, setChatRequestId] = useState(null);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -28,7 +29,6 @@ export default function OwnRequestView() {
         }
       }
     };
-
     fetchUserRole();
   }, []);
 
@@ -44,37 +44,16 @@ export default function OwnRequestView() {
           ...doc.data(),
         }));
 
-        // 🔐 Filtrare: doar cererile făcute de utilizatorul logat
         const userRequests = data.filter((req) => req.email === user.email);
-
         setRequests(userRequests);
-        setFilteredRequests(userRequests);
+        setFilteredRequests(userRequests.filter((req) => req.status === filterStatus));
         setLoading(false);
       } catch (error) {
         console.error("Error loading requests:", error);
       }
     };
     fetchRequests();
-  }, []);
-
-  const handleCategoryChange = (e) => {
-    setCategory(e.target.value);
-  };
-
-  const handleCityChange = (e) => {
-    setCity(e.target.value);
-  };
-
-  useEffect(() => {
-    const filtered = requests.filter((req) => {
-      const matchesCategory =
-        category ? req.category && req.category.toLowerCase().includes(category.toLowerCase()) : true;
-      const matchesCity =
-        city ? req.address && req.address.toLowerCase().includes(city.toLowerCase()) : true;
-      return matchesCategory && matchesCity;
-    });
-    setFilteredRequests(filtered);
-  }, [category, city, requests]);
+  }, [filterStatus]);
 
   const handleDeleteRequest = async (requestId) => {
     try {
@@ -86,57 +65,71 @@ export default function OwnRequestView() {
     }
   };
 
-  if (loading) return <p className="p-6">Loading requests...</p>;
+  const handleFilterChange = (status) => {
+    setFilterStatus(status);
+    setFilteredRequests(requests.filter((req) => req.status === status));
+  };
+
+  const handleOpenChat = (requestId) => {
+    setChatRequestId(requestId);
+  };
+
+  const handleCloseChat = () => {
+    setChatRequestId(null);
+  };
+
+  if (loading) return <p className="p-6">Se încarcă cererile...</p>;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 p-6">
-      <NavBar />
+      <div className="flex flex-col lg:flex-row gap-6 p-6">
+        <NavBar />
 
-      {/* Sidebar pentru filtrare */}
-      <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Filter by category and city</h2>
-
-        <div className="flex flex-col gap-2">
-          <label htmlFor="category" className="font-medium">Category</label>
-          <input
-            type="text"
-            id="category"
-            value={category}
-            onChange={handleCategoryChange}
-            placeholder="Enter category"
-            className="border border-gray-300 p-2 rounded-lg"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2 mt-4">
-          <label htmlFor="city" className="font-medium">City</label>
-          <input
-            type="text"
-            id="city"
-            value={city}
-            onChange={handleCityChange}
-            placeholder="Enter city"
-            className="border border-gray-300 p-2 rounded-lg"
-          />
-        </div>
-      </aside>
-
-      {/* Grid pentru cereri */}
-      <section className="flex-1 mt-24">
-        {filteredRequests.length === 0 ? (
-          <p className="text-gray-600">No requests found matching the filters.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-            {filteredRequests.map((req) => (
-              <RequestContainer
-                key={req.id}
-                request={req}
-                onDelete={userRole === "beneficiar" ? handleDeleteRequest : null}
-              />
-            ))}
+        <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Filtrare cereri</h2>
+          <div className="flex flex-col gap-2">
+            <button
+                onClick={() => handleFilterChange("pending")}
+                className={`text-left px-3 py-2 rounded-lg font-medium ${
+                    filterStatus === "pending"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                }`}
+            >
+              Cereri în așteptare
+            </button>
+            <button
+                onClick={() => handleFilterChange("accepted")}
+                className={`text-left px-3 py-2 rounded-lg font-medium ${
+                    filterStatus === "accepted"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                }`}
+            >
+              Cereri acceptate
+            </button>
           </div>
+        </aside>
+
+        <section className="flex-1 mt-24">
+          {filteredRequests.length === 0 ? (
+              <p className="text-gray-600">Nu există cereri în această categorie.</p>
+          ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+                {filteredRequests.map((req) => (
+                    <RequestContainer
+                        key={req.id}
+                        request={req}
+                        onDelete={userRole === "beneficiar" && filterStatus === "pending" ? handleDeleteRequest : null}
+                        onChat={filterStatus === "accepted" ? handleOpenChat : null}
+                    />
+                ))}
+              </div>
+          )}
+        </section>
+
+        {chatRequestId && (
+            <ChatModal requestId={chatRequestId} onClose={handleCloseChat} />
         )}
-      </section>
-    </div>
+      </div>
   );
 }

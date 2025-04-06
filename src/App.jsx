@@ -6,6 +6,9 @@ import Beneficiar from "./components/Beneficiar";
 import Voluntar from "./components/Voluntar";
 import RequestView from "./components/RequestView";
 import OwnRequestView from "./components/OwnRequestView";
+import VoluntarAccepted from "./components/VoluntarAccepted"; // ✅ Nou
+import VoluntarHistory from "./components/VoluntarHistory";
+
 import "./index.css";
 
 export default function App() {
@@ -17,7 +20,6 @@ export default function App() {
                 path="/register"
                 element={
                     <div className="relative min-h-screen flex items-center justify-center">
-                        {/* Layer cu imagine de fundal opacă */}
                         <div
                             className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50"
                             style={{
@@ -25,8 +27,6 @@ export default function App() {
                                 backgroundAttachment: "fixed"
                             }}
                         />
-
-                        {/* Formular de înregistrare */}
                         <div className="relative z-10 w-full max-w-4xl bg-white bg-opacity-90 p-10 rounded-xl shadow-lg">
                             <h1 className="text-2xl font-bold mb-4 text-center">Înregistrare</h1>
                             <Register />
@@ -39,7 +39,6 @@ export default function App() {
                 path="/login"
                 element={
                     <div className="relative min-h-screen flex items-center justify-center">
-                        {/* Layer cu imagine de fundal opacă */}
                         <div
                             className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50"
                             style={{
@@ -47,8 +46,6 @@ export default function App() {
                                 backgroundAttachment: "fixed"
                             }}
                         />
-
-                        {/* Formular de login */}
                         <div className="relative z-10 w-full max-w-md bg-white bg-opacity-90 p-10 rounded-xl shadow-lg">
                             <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
                             <Login />
@@ -56,10 +53,13 @@ export default function App() {
                     </div>
                 }
             />
+
             <Route path="/beneficiar" element={<Beneficiar />} />
             <Route path="/voluntar" element={<Voluntar />} />
             <Route path="/voluntar/requests" element={<RequestView />} />
             <Route path="/beneficiar/requests" element={<OwnRequestView />} />
+            <Route path="/voluntar/cereriacceptate" element={<VoluntarAccepted />} />
+            <Route path="/voluntar/istoric" element={<VoluntarHistory />} />
         </Routes>
     );
 }

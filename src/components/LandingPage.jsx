@@ -16,8 +16,21 @@ export default function LandingPage() {
       { threshold: 0.2 }
     );
 
-    const target = document.querySelector("#how-it-works");
-    if (target) observer.observe(target);
+    // Observator pentru secțiunea "Cum funcționează aplicația"
+    const targetHowItWorks = document.querySelector("#how-it-works");
+    if (targetHowItWorks) observer.observe(targetHowItWorks);
+
+    // Observator pentru secțiunea "Ce este Help a Hand"
+    const targetAboutHelp = document.querySelector("#about-help-a-hand");
+    if (targetAboutHelp) observer.observe(targetAboutHelp);
+
+    // Observator pentru secțiunea "De ce să te alături?"
+    const targetWhyJoin = document.querySelector("#why-join");
+    if (targetWhyJoin) observer.observe(targetWhyJoin);
+
+    // Observator pentru secțiunea "Fii un voluntar sau găsește ajutor acum!"
+    const targetCallToAction = document.querySelector("#call-to-action");
+    if (targetCallToAction) observer.observe(targetCallToAction);
 
     return () => observer.disconnect();
   }, []);
@@ -72,7 +85,7 @@ export default function LandingPage() {
           <img
             src="/public/images/hero_image.jpeg"
             alt="Voluntar ajutând o persoană"
-            className="w-full max-w-xx  l rounded-lg"
+            className="w-full max-w-xxl rounded-lg"
           />
         </div>
       </main>
@@ -83,7 +96,10 @@ export default function LandingPage() {
           <h3 className="text-4xl font-semibold text-white mb-12">
             Ce este Help a Hand?
           </h3>
-          <p className="text-xl text-white mb-12">
+          <p
+            id="about-help-a-hand"
+            className="text-xl text-white mb-12 opacity-0 translate-y-10 transition-all duration-700 ease-out"
+          >
             Help a Hand este o aplicație care ajută la conectarea voluntarilor
             cu persoanele care au nevoie de ajutor. Indiferent dacă ești o
             persoană în vârstă sau ai o dizabilitate, vei putea solicita ajutor
@@ -167,7 +183,8 @@ export default function LandingPage() {
 
       {/* Beneficiile participării */}
       <section
-        className="bg-gray-50 py-20 px-10"
+        id="why-join"
+        className="bg-gray-50 py-20 px-10 opacity-0 translate-y-10 transition-all duration-700 ease-out"
         style={{ backgroundColor: "#e8e2d4" }}
       >
         <div className="max-w-6xl mx-auto text-center">
@@ -219,7 +236,10 @@ export default function LandingPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="bg-[#70d299] text-white py-20 text-center">
+      <section
+        id="call-to-action"
+        className="bg-[#70d299] text-white py-20 text-center opacity-0 translate-y-10 transition-all duration-700 ease-out"
+      >
         <h3 className="text-4xl font-semibold mb-8">
           Fii un voluntar sau găsește ajutor acum!
         </h3>

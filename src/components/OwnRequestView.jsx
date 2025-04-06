@@ -3,6 +3,7 @@ import { collection, getDocs, deleteDoc, doc, getDoc } from "firebase/firestore"
 import { db, auth } from "../firebase";
 import RequestContainer from "./RequestContainer";
 import NavBar from "./NavBar";
+import ChatModal from "./ChatModal";
 
 export default function OwnRequestView() {
   const [requests, setRequests] = useState([]);
@@ -10,6 +11,7 @@ export default function OwnRequestView() {
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("pending");
   const [userRole, setUserRole] = useState("");
+  const [chatRequestId, setChatRequestId] = useState(null);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -68,6 +70,14 @@ export default function OwnRequestView() {
     setFilteredRequests(requests.filter((req) => req.status === status));
   };
 
+  const handleOpenChat = (requestId) => {
+    setChatRequestId(requestId);
+  };
+
+  const handleCloseChat = () => {
+    setChatRequestId(null);
+  };
+
   if (loading) return <p className="p-6">Se încarcă cererile...</p>;
 
   return (
@@ -79,13 +89,21 @@ export default function OwnRequestView() {
           <div className="flex flex-col gap-2">
             <button
                 onClick={() => handleFilterChange("pending")}
-                className={`text-left px-3 py-2 rounded-lg font-medium ${filterStatus === "pending" ? "bg-green-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700"}`}
+                className={`text-left px-3 py-2 rounded-lg font-medium ${
+                    filterStatus === "pending"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                }`}
             >
               Cereri în așteptare
             </button>
             <button
                 onClick={() => handleFilterChange("accepted")}
-                className={`text-left px-3 py-2 rounded-lg font-medium ${filterStatus === "accepted" ? "bg-green-500 text-white" : "bg-gray-100 hover:bg-gray-200 text-gray-700"}`}
+                className={`text-left px-3 py-2 rounded-lg font-medium ${
+                    filterStatus === "accepted"
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                }`}
             >
               Cereri acceptate
             </button>
@@ -102,11 +120,16 @@ export default function OwnRequestView() {
                         key={req.id}
                         request={req}
                         onDelete={userRole === "beneficiar" && filterStatus === "pending" ? handleDeleteRequest : null}
+                        onChat={filterStatus === "accepted" ? handleOpenChat : null}
                     />
                 ))}
               </div>
           )}
         </section>
+
+        {chatRequestId && (
+            <ChatModal requestId={chatRequestId} onClose={handleCloseChat} />
+        )}
       </div>
   );
 }

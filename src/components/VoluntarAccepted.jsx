@@ -1,11 +1,23 @@
+// ✅ VoluntarAccepted.jsx
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
-import { collection, getDocs, query, where, doc, updateDoc, increment } from "firebase/firestore";
+import {
+    collection,
+    getDocs,
+    query,
+    where,
+    doc,
+    updateDoc,
+    increment
+} from "firebase/firestore";
 import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
+import ChatModal from "./ChatModal"; // 🆕 Import ChatModal
 
 export default function VoluntarAccepted() {
     const [acceptedRequests, setAcceptedRequests] = useState([]);
+    const [showChat, setShowChat] = useState(false);
+    const [activeRequestId, setActiveRequestId] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -44,6 +56,11 @@ export default function VoluntarAccepted() {
         }
     };
 
+    const handleOpenChat = (requestId) => {
+        setActiveRequestId(requestId);
+        setShowChat(true);
+    };
+
     return (
         <div className="min-h-screen bg-[#f9fafb]">
             <NavBar role="voluntar" />
@@ -68,7 +85,7 @@ export default function VoluntarAccepted() {
                         acceptedRequests.map((req) => (
                             <div
                                 key={req.id}
-                                className="bg-white p-5 rounded-lg shadow flex flex-col justify-between min-h-[320px]"
+                                className="bg-white p-5 rounded-lg shadow flex flex-col justify-between min-h-[360px]"
                             >
                                 <div className="mb-4 space-y-1 text-sm text-gray-800">
                                     <p><strong>Categorie:</strong> {req.category}</p>
@@ -77,17 +94,37 @@ export default function VoluntarAccepted() {
                                     <p><strong>Ora:</strong> {req.time}</p>
                                 </div>
 
-                                <button
-                                    onClick={() => handleComplete(req.id)}
-                                    className="mt-auto bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition"
-                                >
-                                    ✅ Cerere Finalizată
-                                </button>
+                                <div className="flex flex-col gap-2 mt-auto">
+                                    <button
+                                        onClick={() => handleOpenChat(req.id)}
+                                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition"
+                                    >
+                                        💬 Chat cu beneficiar
+                                    </button>
+
+                                    <button
+                                        onClick={() => handleComplete(req.id)}
+                                        className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition"
+                                    >
+                                        ✅ Cerere Finalizată
+                                    </button>
+                                </div>
                             </div>
                         ))
                     )}
                 </div>
             </main>
+
+            {/* CHAT MODAL */}
+            {showChat && activeRequestId && (
+                <ChatModal
+                    requestId={activeRequestId}
+                    onClose={() => {
+                        setShowChat(false);
+                        setActiveRequestId(null);
+                    }}
+                />
+            )}
         </div>
     );
 }

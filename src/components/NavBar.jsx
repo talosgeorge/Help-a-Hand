@@ -95,6 +95,16 @@ export default function NavBar({ role, onOpenCreateRequest }) {
 
     const shouldShowBackButton = location.pathname === "/voluntar/request" || location.pathname === "/beneficiar/request";
 
+    // Adăugăm calculul progresului XP
+    const xp = userData?.xp || 0; // Valoare default XP
+    const xpPercentage = (xp / 100) * 100;
+
+    const getProgressBarColor = () => {
+        if (xpPercentage <= 20) return "bg-red-600";
+        if (xpPercentage <= 60) return "bg-yellow-500";
+        return "bg-green-600";
+    };
+
     return (
         <header className="w-full fixed top-0 left-0 z-20 bg-white shadow-sm">
             <nav className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-2 h-16">
@@ -113,6 +123,7 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                             ← Înapoi
                         </button>
                     )}
+
                     {/* Buton alegere pachet doar pentru beneficiar */}
                     {userData?.role === "beneficiar" && (
                         <div
@@ -160,6 +171,19 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                     ))}
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {/* Bara de XP */}
+                    {userData?.role === "voluntar" && (
+                        <div className="flex items-center gap-2">
+                            <p className="text-gray-700">Nivel: {userData?.level || 1}</p>
+                            <div className="relative w-32 h-4 bg-gray-300 rounded-full">
+                                <div
+                                    className={`absolute top-0 left-0 h-full ${getProgressBarColor()} rounded-full`}
+                                    style={{ width: `${xpPercentage}%` }}
+                                />
+                            </div>
                         </div>
                     )}
 

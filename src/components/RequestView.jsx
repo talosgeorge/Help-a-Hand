@@ -1,4 +1,3 @@
-// RequestView.jsx
 import { useEffect, useState } from "react";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db, auth } from "../firebase";
@@ -10,7 +9,8 @@ export default function RequestView() {
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("Toate");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [addressFilter, setAddressFilter] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,8 +18,8 @@ export default function RequestView() {
       try {
         const snapshot = await getDocs(collection(db, "requests"));
         const data = snapshot.docs
-            .map((doc) => ({ id: doc.id, ...doc.data() }))
-            .filter((req) => req.status === "pending"); // ✅ doar cele în așteptare
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          .filter((req) => req.status === "pending");
 
         const priorityMap = {
           Diamond: 1,
@@ -44,15 +44,37 @@ export default function RequestView() {
     fetchRequests();
   }, []);
 
-  const handleCategoryFilter = (category) => {
-    setSelectedCategory(category);
-    if (category === "Toate") {
-      setFilteredRequests(requests);
-    } else {
-      const filtered = requests.filter((req) => req.category === category);
-      setFilteredRequests(filtered);
+  useEffect(() => {
+    const normalizeText = (text) =>
+      text
+        ?.normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/ș|ş/g, "s")
+        .replace(/ț|ţ/g, "t")
+        .replace(/ă/g, "a")
+        .replace(/î/g, "i")
+        .replace(/â/g, "a")
+        .toLowerCase();
+
+    let filtered = [...requests];
+
+    if (categoryFilter.trim() !== "") {
+      const catSearch = normalizeText(categoryFilter);
+      filtered = filtered.filter((req) =>
+        normalizeText(req.category).includes(catSearch)
+      );
     }
-  };
+
+    if (addressFilter.trim() !== "") {
+      const addrSearch = normalizeText(addressFilter);
+      filtered = filtered.filter((req) =>
+        normalizeText(req.address).includes(addrSearch)
+      );
+    }
+
+    setFilteredRequests(filtered);
+  }, [categoryFilter, addressFilter, requests]);
+
 
   const handleAcceptRequest = async (requestId) => {
     try {
@@ -69,58 +91,69 @@ export default function RequestView() {
       });
 
       alert("✅ Cererea a fost acceptată cu succes!");
-
-      // Eliminăm cererea din listă (opțional)
       setFilteredRequests((prev) => prev.filter((r) => r.id !== requestId));
       setRequests((prev) => prev.filter((r) => r.id !== requestId));
-
     } catch (error) {
       console.error("Eroare la acceptarea cererii:", error);
       alert("❌ A apărut o eroare la acceptare.");
     }
   };
 
-
-  const categories = ["Toate", ...new Set(requests.map((req) => req.category))];
-
   if (loading) return <p className="p-6">Se încarcă cererile...</p>;
 
   return (
-      <div className="flex flex-col lg:flex-row gap-6 p-6">
-        <NavBar />
+    <div className="flex flex-col lg:flex-row gap-6 p-6">
+      <NavBar />
 
-        {/* Sidebar */}
-        <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Filtrare după categorie</h2>
-          <div className="flex flex-col gap-2">
-            {categories.map((cat, index) => (
-                <button
-                    key={index}
-                    onClick={() => handleCategoryFilter(cat)}
-                    className={`text-left px-3 py-2 rounded-lg font-medium ${
-                        selectedCategory === cat
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    }`}
-                >
-                  {cat}
-                </button>
+      {/* Sidebar */}
+      <aside className="w-full lg:w-64 bg-white shadow-md rounded-2xl p-4 h-fit mt-24">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Filtrare</h2>
+
+        <div className="mb-4">
+          <label className="block mb-1 text-sm font-medium text-gray-700">Categorie:</label>
+          <input
+            type="text"
+            placeholder="Ex: Medicamente"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        <div className="mb-2">
+          <label className="block mb-1 text-sm font-medium text-gray-700">Adresă:</label>
+          <input
+            type="text"
+            placeholder="Ex: Str. Florilor"
+            value={addressFilter}
+            onChange={(e) => setAddressFilter(e.target.value)}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+      </aside>
+
+      <section className="flex-1 mt-24">
+        <button
+          onClick={() => navigate(-1)}
+          className="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition"
+        >
+          ← Înapoi
+        </button>
+        {filteredRequests.length === 0 ? (
+          <p className="text-gray-600">Nicio cerere găsită.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+            {filteredRequests.map((req) => (
+              <RequestContainer
+                key={req.id}
+                request={req}
+                onAccept={handleAcceptRequest}
+              />
             ))}
           </div>
-        </aside>
-
-        {/* Grid */}
-        <section className="flex-1 mt-24">
-          {filteredRequests.length === 0 ? (
-              <p className="text-gray-600">Nicio cerere găsită.</p>
-          ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                {filteredRequests.map((req) => (
-                    <RequestContainer key={req.id} request={req} onAccept={handleAcceptRequest} />
-                ))}
-              </div>
-          )}
-        </section>
-      </div>
+        )}
+      </section>
+    </div>
   );
 }

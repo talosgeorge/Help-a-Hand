@@ -5,91 +5,88 @@ import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
-  const handleGoBack = (e) => {
-    e.preventDefault();
-    navigate(-1);
-  };
+    const handleGoBack = (e) => {
+        e.preventDefault();
+        navigate(-1);
+    };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      // Sign in the user with Firebase Authentication
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            const userCredential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+            const user = userCredential.user;
 
-      // Fetch the user's role from Firestore
-      const userDoc = await getDoc(doc(db, "users", user.uid));
+            // Fetch the user's role from Firestore
+            const userDoc = await getDoc(doc(db, "users", user.uid));
 
-      if (userDoc.exists()) {
-        const role = userDoc.data().role;
+            if (userDoc.exists()) {
+                const role = userDoc.data().role;
 
-        if (role === "beneficiar") {
-          alert("Redirecting to Beneficiary page...");
-          navigate("/beneficiar");
-        } else if (role === "voluntar") {
-          alert("Redirecting to Volunteer page...");
-          navigate("/voluntar");
-        } else {
-          alert("Unknown role.");
+                if (role === "beneficiar") {
+                    navigate("/beneficiar");
+                } else if (role === "voluntar") {
+                    navigate("/voluntar");
+                } else {
+                    alert("Unknown role.");
+                }
+            } else {
+                alert("User data not found in Firestore.");
+            }
+        } catch (error) {
+            alert("Error: " + error.message);
         }
-      } else {
-        alert("User data not found in Firestore.");
-      }
-    } catch (error) {
-      alert("Error: " + error.message);
-    }
-  };
+    };
 
-  return (
-    <form onSubmit={handleLogin} className="space-y-5">
-      <div>
-        <label
-          htmlFor="username"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Email
-        </label>
-        <input
-          onChange={(e) => setEmail(e.target.value)}
-          type="text"
-          id="username"
-          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Email"
-          required
-        />
-      </div>
+    return (
+        <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+                <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-gray-700"
+                >
+                    Email
+                </label>
+                <input
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    id="username"
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Email"
+                    required
+                />
+            </div>
 
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Parola
-        </label>
-        <input
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          id="password"
-          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Parola"
-          required
-        />
-      </div>
+            <div>
+                <label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700"
+                >
+                    Parola
+                </label>
+                <input
+                    onChange={(e) => setPassword(e.target.value)}
+                    type="password"
+                    id="password"
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Parola"
+                    required
+                />
+            </div>
 
-      <button
-        type="submit"
-        className="w-full py-3 bg-[#70d299] text-white font-semibold rounded-lg hover:bg-[#429b7f] transition"
-      >
-        Sign In
-      </button>
-    </form>
-  );
+            <button
+                type="submit"
+                className="w-full py-3 bg-[#70d299] text-white font-semibold rounded-lg hover:bg-[#429b7f] transition"
+            >
+                Sign In
+            </button>
+        </form>
+    );
 }

@@ -17,7 +17,7 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
     const packageImageMap = {
         Silver: "/images/silver.jpg",
         Gold: "/images/gold.jpg",
-        Diamond: "/images/diamond.jpg"
+        Diamond: "/images/diamond.jpg",
     };
 
     useEffect(() => {
@@ -40,6 +40,7 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
     }, []);
 
     const getInitials = (email) => {
+        if (!email) return "??";
         return email.split("@")[0].slice(0, 2).toUpperCase();
     };
 
@@ -93,7 +94,8 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
         }
     };
 
-    const shouldShowBackButton = location.pathname === "/voluntar/request" || location.pathname === "/beneficiar/request";
+    const shouldShowBackButton =
+        location.pathname === "/voluntar/request" || location.pathname === "/beneficiar/request";
 
     return (
         <header className="w-full fixed top-0 left-0 z-20 bg-white shadow-sm">
@@ -114,6 +116,7 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
                         </button>
                     )}
 
+                    {/* Package selector pentru beneficiar */}
                     {userData?.role === "beneficiar" && (
                         <div
                             className="relative"
@@ -147,9 +150,10 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
                                         <div
                                             key={pkg}
                                             onClick={() => handlePackageSelect(pkg)}
-                                            className={`relative cursor-pointer overflow-hidden rounded-xl transition-all duration-300 border-2 ${userData.package === pkg
-                                                ? "border-green-500 scale-105"
-                                                : "border-transparent hover:border-green-300"
+                                            className={`relative cursor-pointer overflow-hidden rounded-xl transition-all duration-300 border-2 ${
+                                                userData.package === pkg
+                                                    ? "border-green-500 scale-105"
+                                                    : "border-transparent hover:border-green-300"
                                             }`}
                                         >
                                             <img
@@ -167,6 +171,7 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
                         </div>
                     )}
 
+                    {/* XP progress bar doar pentru voluntari */}
                     {userData?.role === "voluntar" && (
                         <LevelUpProgressBar
                             xp={userData?.xp}
@@ -176,6 +181,7 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
                         />
                     )}
 
+                    {/* Profil dropdown */}
                     <li
                         className="relative flex items-center space-x-2"
                         onMouseEnter={showDropdown}
@@ -192,7 +198,7 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
                                 ) : (
                                     userData && (
                                         <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center text-sm font-semibold group-hover:bg-green-600 transition-colors duration-300">
-                                            {getInitials(userData.email)}
+                                            {getInitials(userData?.email)}
                                         </div>
                                     )
                                 )}
@@ -226,27 +232,27 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
 
                                     <div className="flex justify-between text-sm">
                                         <span><strong>Nume:</strong></span>
-                                        <span>{userData.name || "N/A"}</span>
+                                        <span>{userData?.name || "N/A"}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span><strong>Email:</strong></span>
-                                        <span>{userData.email || "N/A"}</span>
+                                        <span>{userData?.email || "N/A"}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span><strong>Rol:</strong></span>
-                                        <span>{userData.role}</span>
+                                        <span>{userData?.role || "N/A"}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span><strong>Telefon:</strong></span>
-                                        <span>{userData.phone || "N/A"}</span>
+                                        <span>{userData?.phone || "N/A"}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span className="font-semibold">Oras:</span>
-                                        <span className="ml-2 whitespace-nowrap">{userData.city || "N/A"}</span>
+                                        <span><strong>Oraș:</strong></span>
+                                        <span>{userData?.city || "N/A"}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span><strong>Adresa:</strong></span>
-                                        <span>{userData.street || "N/A"}</span>
+                                        <span><strong>Adresă:</strong></span>
+                                        <span>{userData?.street || "N/A"}</span>
                                     </div>
                                 </div>
 
@@ -254,7 +260,7 @@ export default function NavBar({ role, onOpenCreateRequest, userData, setUserDat
                                     onClick={handleLogout}
                                     className="w-full text-white bg-red-500 hover:bg-red-600 mt-2 py-1 rounded-lg text-center cursor-pointer transition-colors duration-300 text-sm"
                                 >
-                                    Disconnect
+                                    Deconectare
                                 </p>
                             </div>
                         )}

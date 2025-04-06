@@ -71,6 +71,7 @@ export default function CreateRequestContainer({ onClose }) {
         uid: user.uid,
         email: user.email,
         createdAt: new Date(),
+        phone: userData.phone,
         priority,
         package: userPackage,
         status: "pending" // ✅ nou status adăugat

@@ -32,10 +32,8 @@ export default function Login() {
         const role = userDoc.data().role;
 
         if (role === "beneficiar") {
-          alert("Redirecting to Beneficiary page...");
           navigate("/beneficiar");
         } else if (role === "voluntar") {
-          alert("Redirecting to Volunteer page...");
           navigate("/voluntar");
         } else {
           alert("Unknown role.");

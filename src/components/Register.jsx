@@ -78,12 +78,13 @@ export default function Register() {
 
   return (
     <div className="relative">
-      {/* POPUP dinamic */}
+      {/* POPUP pe mijloc sus global */}
       {showPopup && (
-        <div className="fixed top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg animate-bounce text-xl font-semibold">
-          Înregistrare cu succes!
-        </div>
-      )}
+  <div className="fixed top-8 left-0 right-0 mx-auto z-50 w-80 bg-green-500 text-white px-6 py-4 rounded-md shadow-lg animate-bounce text-xl font-semibold text-center">
+    Înregistrare cu succes!
+  </div>
+)}
+
 
       <form onSubmit={handleRegister} className="space-y-5">
         {error && <div className="text-red-500">{error}</div>}

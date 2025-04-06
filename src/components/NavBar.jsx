@@ -113,6 +113,7 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                             ← Înapoi
                         </button>
                     )}
+
                     {/* Buton alegere pachet doar pentru beneficiar */}
                     {userData?.role === "beneficiar" && (
                         <div
@@ -127,11 +128,15 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                             }}
                         >
                             <button className="flex items-center gap-2 border rounded-full px-3 py-1 hover:border-green-400 transition">
-                                <img
-                                    src={packageImageMap[userData.package] || "/images/silver.jpg"}
-                                    alt="Pachet"
-                                    className="w-8 h-8 rounded-full object-cover"
-                                />
+                                {userData.package ? (
+                                    <img
+                                        src={packageImageMap[userData.package]}
+                                        alt="Pachet"
+                                        className="w-8 h-8 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-8 h-8 rounded-full bg-white border border-gray-300"></div>
+                                )}
                                 <span className="text-sm text-gray-700">
                                     {userData.package || "Alege pachet"}
                                 </span>

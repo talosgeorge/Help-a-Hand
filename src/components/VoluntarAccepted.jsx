@@ -63,21 +63,29 @@ export default function VoluntarAccepted() {
             const user = auth.currentUser;
             const userRef = doc(db, "users", user.uid);
 
-            // Creșterea XP-ului și actualizarea nivelului
-            const newXP = (userData.xp || 0) + 20; // Adăugăm 10 XP la utilizator
-            const newLevel = Math.floor(newXP / 100) + 1; // Calculăm nivelul pe baza XP-ului
+            // Calculăm noul XP, resetând la 0 după fiecare 100 XP
+            let newXP = (userData.xp || 0) + 20;
+            if (newXP >= 100) {
+                newXP = 0; // Resetăm XP-ul la 0 după ce depășește 100
+            }
 
-            // Actualizarea XP-ului și nivelului în Firestore
+            // Calculăm nivelul în funcție de XP-ul total acumulat
+            const totalXP = (userData.totalXP || 0) + 20; // Total XP-ul adunat până acum
+            const newLevel = Math.floor(totalXP / 100) + 1;
+
+            // Actualizăm datele utilizatorului în Firestore
             await updateDoc(userRef, {
-                xp: newXP,
-                level: newLevel,
+                xp: newXP, // XP-ul se resetează la 0 dacă depășește 100
+                level: newLevel, // Nivelul se calculează în continuare pe baza XP-ului total
+                totalXP: totalXP, // Păstrăm total XP-ul acumulat pentru a urmări nivelul
                 completedCount: increment(1) // Incrementăm contorul de cereri finalizate
             });
 
             // Instant update of state for immediate UI reflection
             setUserData((prev) => ({
                 ...prev,
-                xp: newXP,
+                xp: newXP, // XP-ul resetat
+                totalXP: totalXP, // Total XP-ul actualizat
                 level: newLevel
             }));
 

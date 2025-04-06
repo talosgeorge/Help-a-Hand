@@ -20,6 +20,30 @@ export default function NavBar({ role, onOpenCreateRequest }) {
         Diamond: "/images/diamond.jpg"
     };
 
+    // Calculul nivelului pe baza XP-ului
+    const calculateLevel = (xp) => {
+        if (xp >= 300) return 3; // Nivel 3 pentru XP >= 300
+        if (xp >= 200) return 2; // Nivel 2 pentru XP >= 200
+        if (xp >= 100) return 1; // Nivel 1 pentru XP >= 100
+        return 0; // Nivel 0 pentru XP < 100
+    };
+
+    // Actualizează nivelul în Firestore
+    const updateLevelInDatabase = async (xp) => {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const newLevel = calculateLevel(xp); // Calculează nivelul în funcție de XP
+
+        // Actualizează doar dacă nivelul s-a schimbat
+        if (userData?.level !== newLevel) {
+            try {
+                await updateDoc(userRef, { level: newLevel });
+                setUserData((prev) => ({ ...prev, level: newLevel }));
+            } catch (error) {
+                console.error("Eroare la actualizarea nivelului:", error);
+            }
+        }
+    };
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
@@ -38,6 +62,15 @@ export default function NavBar({ role, onOpenCreateRequest }) {
 
         return () => unsubscribe();
     }, []);
+
+    // Actualizează nivelul la fiecare schimbare de XP
+    useEffect(() => {
+        if (userData?.xp || userData?.xp === 0) {
+            // Verifică dacă XP-ul a ajuns la 100 și resetează-l, crește nivelul
+            const xpAfterReset = userData.xp >= 100 ? 0 : userData.xp;
+            updateLevelInDatabase(xpAfterReset); // Actualizează nivelul
+        }
+    }, [userData?.xp]); // Această logică se va declanșa atunci când XP-ul se schimbă
 
     const getInitials = (email) => {
         return email.split("@")[0].slice(0, 2).toUpperCase();
@@ -94,6 +127,16 @@ export default function NavBar({ role, onOpenCreateRequest }) {
     };
 
     const shouldShowBackButton = location.pathname === "/voluntar/request" || location.pathname === "/beneficiar/request";
+
+    // Adăugăm calculul progresului XP
+    const xp = userData?.xp || 0; // Valoare default XP
+    const xpPercentage = (xp / 100) * 100;
+
+    const getProgressBarColor = () => {
+        if (xpPercentage <= 20) return "bg-red-600";
+        if (xpPercentage <= 60) return "bg-yellow-500";
+        return "bg-green-600";
+    };
 
     return (
         <header className="w-full fixed top-0 left-0 z-20 bg-white shadow-sm">
@@ -165,6 +208,19 @@ export default function NavBar({ role, onOpenCreateRequest }) {
                                     ))}
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {/* Bara de XP */}
+                    {userData?.role === "voluntar" && (
+                        <div className="flex items-center gap-2">
+                            <p className="text-gray-700">Nivel: {userData?.level || 0}</p>
+                            <div className="relative w-32 h-4 bg-gray-300 rounded-full">
+                                <div
+                                    className={`absolute top-0 left-0 h-full ${getProgressBarColor()} rounded-full`}
+                                    style={{ width: `${xpPercentage}%` }}
+                                />
+                            </div>
                         </div>
                     )}
 

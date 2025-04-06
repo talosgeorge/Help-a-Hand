@@ -1,4 +1,3 @@
-// ✅ VoluntarAccepted.jsx
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
 import {
@@ -8,18 +7,21 @@ import {
     where,
     doc,
     updateDoc,
-    increment
+    increment,
+    getDoc
 } from "firebase/firestore";
 import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
-import ChatModal from "./ChatModal"; // 🆕 Import ChatModal
+import ChatModal from "./ChatModal"; // Import ChatModal
 
 export default function VoluntarAccepted() {
     const [acceptedRequests, setAcceptedRequests] = useState([]);
     const [showChat, setShowChat] = useState(false);
     const [activeRequestId, setActiveRequestId] = useState(null);
+    const [userData, setUserData] = useState(null); // State pentru a ține datele utilizatorului
     const navigate = useNavigate();
 
+    // Fetch accepted requests
     useEffect(() => {
         const fetchAcceptedRequests = async () => {
             const user = auth.currentUser;
@@ -36,9 +38,23 @@ export default function VoluntarAccepted() {
             setAcceptedRequests(data);
         };
 
+        // Fetch user data (XP and level)
+        const fetchUserData = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    setUserData(userDoc.data());
+                }
+            }
+        };
+
         fetchAcceptedRequests();
+        fetchUserData();
     }, []);
 
+    // Handle completion of request
     const handleComplete = async (requestId) => {
         try {
             const requestRef = doc(db, "requests", requestId);
@@ -46,10 +62,34 @@ export default function VoluntarAccepted() {
 
             const user = auth.currentUser;
             const userRef = doc(db, "users", user.uid);
+
+            // Calculăm noul XP, resetând la 0 după fiecare 100 XP
+            let newXP = (userData.xp || 0) + 20;
+            if (newXP >= 100) {
+                newXP = 0; // Resetăm XP-ul la 0 după ce depășește 100
+            }
+
+            // Calculăm nivelul în funcție de XP-ul total acumulat
+            const totalXP = (userData.totalXP || 0) + 20; // Total XP-ul adunat până acum
+            const newLevel = Math.floor(totalXP / 100) + 1;
+
+            // Actualizăm datele utilizatorului în Firestore
             await updateDoc(userRef, {
-                completedCount: increment(1)
+                xp: newXP, // XP-ul se resetează la 0 dacă depășește 100
+                level: newLevel, // Nivelul se calculează în continuare pe baza XP-ului total
+                totalXP: totalXP, // Păstrăm total XP-ul acumulat pentru a urmări nivelul
+                completedCount: increment(1) // Incrementăm contorul de cereri finalizate
             });
 
+            // Instant update of state for immediate UI reflection
+            setUserData((prev) => ({
+                ...prev,
+                xp: newXP, // XP-ul resetat
+                totalXP: totalXP, // Total XP-ul actualizat
+                level: newLevel
+            }));
+
+            // Îndepărtăm cererea din lista de cereri acceptate
             setAcceptedRequests((prev) => prev.filter((req) => req.id !== requestId));
         } catch (error) {
             console.error("Eroare la finalizare cerere:", error);
@@ -63,7 +103,7 @@ export default function VoluntarAccepted() {
 
     return (
         <div className="min-h-screen bg-[#f9fafb]">
-            <NavBar role="voluntar" />
+            <NavBar role="voluntar" userData={userData} />
 
             <main className="pt-28 px-6 flex flex-col items-center">
                 <div className="w-full max-w-4xl text-center mb-6">
@@ -102,6 +142,7 @@ export default function VoluntarAccepted() {
                                         💬 Chat cu beneficiar
                                     </button>
 
+                                    {/* Buton pentru finalizarea cererii */}
                                     <button
                                         onClick={() => handleComplete(req.id)}
                                         className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition"

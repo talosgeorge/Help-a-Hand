@@ -6,17 +6,36 @@ import {
     query,
     orderBy,
     onSnapshot,
-    serverTimestamp
+    serverTimestamp,
+    getDoc,
+    doc
 } from 'firebase/firestore';
 
 export default function ChatModal({ requestId, onClose }) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [chatPartnerName, setChatPartnerName] = useState('');
     const chatRef = useRef(null);
 
     const currentUser = auth.currentUser;
 
-    // Fetch messages in real time
+    useEffect(() => {
+        const fetchChatPartnerName = async () => {
+            const requestDoc = await getDoc(doc(db, 'requests', requestId));
+            if (requestDoc.exists()) {
+                const data = requestDoc.data();
+                const partnerId = data.volunteerId === currentUser.uid ? data.uid : data.volunteerId;
+                const partnerDoc = await getDoc(doc(db, 'users', partnerId));
+                if (partnerDoc.exists()) {
+                    const partnerData = partnerDoc.data();
+                    setChatPartnerName(partnerData.name || 'Utilizator');
+                }
+            }
+        };
+
+        fetchChatPartnerName();
+    }, [requestId, currentUser.uid]);
+
     useEffect(() => {
         const messagesRef = collection(db, 'chats', requestId, 'messages');
         const q = query(messagesRef, orderBy('timestamp'));
@@ -49,23 +68,24 @@ export default function ChatModal({ requestId, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-4 relative">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative">
                 <button
                     onClick={onClose}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-black text-xl"
+                    className="absolute top-2 right-4 text-gray-600 hover:text-black text-3xl"
+                    aria-label="Închide chatul"
                 >
                     &times;
                 </button>
-                <h2 className="text-xl font-bold mb-2 text-center">Chat Beneficiar & Voluntar</h2>
+                <h2 className="text-2xl font-bold mb-4 text-center text-green-700">Chat cu {chatPartnerName}</h2>
 
-                <div className="h-64 overflow-y-auto border rounded-md p-2 bg-gray-50">
+                <div className="h-72 overflow-y-auto border border-gray-300 rounded-md p-4 bg-gray-50 text-base leading-relaxed">
                     {messages.map(msg => (
                         <div
                             key={msg.id}
-                            className={`my-1 p-2 rounded-lg max-w-[75%] ${
+                            className={`my-2 py-2 px-3 rounded-xl max-w-[80%] break-words shadow-md text-[17px] tracking-wide ${
                                 msg.senderId === currentUser.uid
                                     ? 'ml-auto bg-green-100 text-right'
-                                    : 'mr-auto bg-gray-200'
+                                    : 'mr-auto bg-gray-200 text-left'
                             }`}
                         >
                             {msg.text}
@@ -74,17 +94,17 @@ export default function ChatModal({ requestId, onClose }) {
                     <div ref={chatRef}></div>
                 </div>
 
-                <form onSubmit={sendMessage} className="mt-2 flex gap-2">
+                <form onSubmit={sendMessage} className="mt-4 flex gap-3">
                     <input
                         type="text"
-                        className="flex-1 border border-gray-300 rounded-md px-3 py-1"
+                        className="flex-1 border border-gray-400 rounded-lg px-4 py-3 text-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
                         placeholder="Scrie un mesaj..."
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                     />
                     <button
                         type="submit"
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md"
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-3 rounded-lg text-lg"
                     >
                         Trimite
                     </button>

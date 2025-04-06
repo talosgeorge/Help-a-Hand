@@ -46,7 +46,7 @@ export default function OwnRequestView() {
                     ...doc.data(),
                 }));
 
-                const userRequests = data.filter((req) => req.email === user.email);
+                const userRequests = data.filter((req) => req.email?.toLowerCase() === user.email?.toLowerCase());
                 setRequests(userRequests);
                 setFilteredRequests(userRequests.filter((req) => req.status === filterStatus));
                 setLoading(false);
@@ -94,7 +94,7 @@ export default function OwnRequestView() {
                         className={`text-left px-3 py-2 rounded-lg font-medium ${filterStatus === "pending"
                             ? "bg-green-500 text-white"
                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                            }`}
+                        }`}
                     >
                         Cereri în așteptare
                     </button>
@@ -103,7 +103,7 @@ export default function OwnRequestView() {
                         className={`text-left px-3 py-2 rounded-lg font-medium ${filterStatus === "accepted"
                             ? "bg-green-500 text-white"
                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                            }`}
+                        }`}
                     >
                         Cereri acceptate
                     </button>
@@ -134,7 +134,7 @@ export default function OwnRequestView() {
             </section>
 
             {chatRequestId && (
-                <ChatModal requestId={chatRequestId} onClose={handleCloseChat} />
+                <ChatModal requestId={chatRequestId} onClose={handleCloseChat} role={userRole} />
             )}
         </div>
     );

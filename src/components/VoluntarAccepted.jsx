@@ -10,51 +10,49 @@ import {
     increment,
     getDoc
 } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import NavBar from "./NavBar";
 import { useNavigate } from "react-router-dom";
-import ChatModal from "./ChatModal"; // Import ChatModal
+import ChatModal from "./ChatModal";
 
 export default function VoluntarAccepted() {
     const [acceptedRequests, setAcceptedRequests] = useState([]);
     const [showChat, setShowChat] = useState(false);
     const [activeRequestId, setActiveRequestId] = useState(null);
-    const [userData, setUserData] = useState(null); // State pentru a ține datele utilizatorului
+    const [userData, setUserData] = useState(null);
     const navigate = useNavigate();
 
-    // Fetch accepted requests
     useEffect(() => {
-        const fetchAcceptedRequests = async () => {
-            const user = auth.currentUser;
-            if (!user) return;
-
-            const q = query(
-                collection(db, "requests"),
-                where("status", "==", "accepted"),
-                where("volunteerId", "==", user.uid)
-            );
-
-            const snapshot = await getDocs(q);
-            const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-            setAcceptedRequests(data);
-        };
-
-        // Fetch user data (XP and level)
-        const fetchUserData = async () => {
-            const user = auth.currentUser;
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const userDocRef = doc(db, "users", user.uid);
-                const userDoc = await getDoc(userDocRef);
-                if (userDoc.exists()) {
-                    setUserData(userDoc.data());
-                }
+                await fetchUserData(user.uid);
+                await fetchAcceptedRequests(user.uid);
             }
-        };
+        });
 
-        fetchAcceptedRequests();
-        fetchUserData();
+        return () => unsubscribe();
     }, []);
 
-    // Handle completion of request
+    const fetchUserData = async (uid) => {
+        const userDocRef = doc(db, "users", uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+            setUserData(userDoc.data());
+        }
+    };
+
+    const fetchAcceptedRequests = async (uid) => {
+        const q = query(
+            collection(db, "requests"),
+            where("status", "==", "accepted"),
+            where("volunteerId", "==", uid)
+        );
+
+        const snapshot = await getDocs(q);
+        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setAcceptedRequests(data);
+    };
+
     const handleComplete = async (requestId) => {
         try {
             const requestRef = doc(db, "requests", requestId);
@@ -63,33 +61,26 @@ export default function VoluntarAccepted() {
             const user = auth.currentUser;
             const userRef = doc(db, "users", user.uid);
 
-            // Calculăm noul XP, resetând la 0 după fiecare 100 XP
             let newXP = (userData.xp || 0) + 20;
-            if (newXP >= 100) {
-                newXP = 0; // Resetăm XP-ul la 0 după ce depășește 100
-            }
+            if (newXP >= 100) newXP = 0;
 
-            // Calculăm nivelul în funcție de XP-ul total acumulat
-            const totalXP = (userData.totalXP || 0) + 20; // Total XP-ul adunat până acum
+            const totalXP = (userData.totalXP || 0) + 20;
             const newLevel = Math.floor(totalXP / 100) + 1;
 
-            // Actualizăm datele utilizatorului în Firestore
             await updateDoc(userRef, {
-                xp: newXP, // XP-ul se resetează la 0 dacă depășește 100
-                level: newLevel, // Nivelul se calculează în continuare pe baza XP-ului total
-                totalXP: totalXP, // Păstrăm total XP-ul acumulat pentru a urmări nivelul
-                completedCount: increment(1) // Incrementăm contorul de cereri finalizate
+                xp: newXP,
+                level: newLevel,
+                totalXP: totalXP,
+                completedCount: increment(1)
             });
 
-            // Instant update of state for immediate UI reflection
             setUserData((prev) => ({
                 ...prev,
-                xp: newXP, // XP-ul resetat
-                totalXP: totalXP, // Total XP-ul actualizat
+                xp: newXP,
+                totalXP: totalXP,
                 level: newLevel
             }));
 
-            // Îndepărtăm cererea din lista de cereri acceptate
             setAcceptedRequests((prev) => prev.filter((req) => req.id !== requestId));
         } catch (error) {
             console.error("Eroare la finalizare cerere:", error);
@@ -142,7 +133,6 @@ export default function VoluntarAccepted() {
                                         💬 Chat cu beneficiar
                                     </button>
 
-                                    {/* Buton pentru finalizarea cererii */}
                                     <button
                                         onClick={() => handleComplete(req.id)}
                                         className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition"
@@ -156,7 +146,6 @@ export default function VoluntarAccepted() {
                 </div>
             </main>
 
-            {/* CHAT MODAL */}
             {showChat && activeRequestId && (
                 <ChatModal
                     requestId={activeRequestId}
